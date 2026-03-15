@@ -1,74 +1,52 @@
-#define UNUSED __attribute__((unused))
+#include <iostream>
 
-#define OPENG_INCLUDES
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#define CGLM_INCLUDE
-#include <cglm/cglm.h>
+const char WINDOW_TITLE[] = "Renderer OpenGL 4.1";
+const int WINDOW_SIZE[2] = { 1280, 720 };
 
-#define SOKOL_INCLUDE
-#include <sokol_gfx.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-
-static void framebuffer_size_callback(UNUSED GLFWwindow* window, int width, int height)
+void create_window(void)
 {
-	glViewport(0, 0, width, height);
-}
-
-static GLFWwindow* init(void)
-{
-	if (!glfwInit()) {
-		fprintf(stderr, "GLFW initialization failed\n");
-		return NULL;
+	if ( !glfwInit() ) {
+		std::cout << "GLFW inita failed\n";
 	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	// OpenGL Version Hints
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#if __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // MacOS Required
 
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Renderer", NULL, NULL);
-	if (!window) {
-		fprintf(stderr, "GLFW window creation failed\n");
-		glfwTerminate();
-		return NULL;
+	GLFWwindow *window = glfwCreateWindow(WINDOW_SIZE[0], WINDOW_SIZE[1],
+					      WINDOW_TITLE, NULL, NULL);
+	if (window == NULL) {
+		std::cout << "Failed to create GLFW window\n";
+
+		return;
 	}
-
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1); 
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		fprintf(stderr, "Failed to initialize GLAD\n");
-		return NULL;
+		std::cout << "Failed to initialise GLAD\n";
+
+		return;
 	}
 
-	const char *version = (const char *)glGetString(GL_VERSION);
-	printf("OpenGL version: %s\n", version);
+	glViewport(0, 0, 1280, 720);
 
-	return window;
-}
-
-int main(UNUSED int argc, UNUSED char **argv)
-{
-	GLFWwindow* window = init();
-	if (!window) {
-		return EXIT_FAILURE;
-	}
-
-	glViewport(0, 0, 800, 600);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-	while (!glfwWindowShouldClose(window)) {
+	// Render Loop
+	while(!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+}
+
+int main (void)
+{
+	create_window();
 
 	glfwTerminate();
-	return EXIT_SUCCESS;
+	return 0;
 }
