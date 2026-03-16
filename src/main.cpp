@@ -52,7 +52,8 @@ int main( void )
 		return EXIT_FAILURE;
 
 	// shader
-	Shader shader_program( "include/shaders/default.vert.txt", "include/shaders/default.frag.txt" );
+	Shader shader_program( "include/shaders/default.vert.txt",
+			       "include/shaders/default.frag.txt" );
 
 	VAO VAO1;
 	VAO1.Bind();
