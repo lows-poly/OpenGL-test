@@ -11,6 +11,7 @@
 
 const int WINDOW_SIZE[2] = { 1280, 720 };
 const char WINDOW_TITLE[] = "Renderer OpenGL 4.1";
+
 GLfloat vertices[] = {
 	-0.5f, -0.5f * float( sqrt(3) ) / 3, 0.0f,	// lower left corner
 	0.5f, -0.5f * float( sqrt(3) ) /3, 0.0f,	// lower right corner
