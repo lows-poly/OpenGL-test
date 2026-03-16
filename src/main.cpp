@@ -69,11 +69,6 @@ int main( void )
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-	// clear window
-	glClearColor( 0.07f, 0.13f, 0.17f, 1.0f );
-	glClear( GL_COLOR_BUFFER_BIT );
-	glfwSwapBuffers( window );
-
 	// Render Loop
 	while( !glfwWindowShouldClose(window) ) {
 		// input
