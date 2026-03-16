@@ -35,6 +35,7 @@ void framebuffer_size_callback( UNUSED GLFWwindow *window, int width, int height
 }
 
 void draw_triangle( Shader *shader_program, VAO *VAO1 );
+void clean_shader( Shader *shader_program, VAO *VAO1, VBO *VBO1, EBO *EBO1 );
 
 // MAIN
 int main( void )
@@ -83,12 +84,7 @@ int main( void )
 		glfwPollEvents();
 	}
 
-	// Clean up
-	VAO1.Delete();
-	VBO1.Delete();
-	EBO1.Delete();
-	shader_program.Delete();
-
+	clean_shader( &shader_program, &VAO1, &VBO1, &EBO1 );
 	glfwDestroyWindow( window ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely
 	return EXIT_SUCCESS;
@@ -105,6 +101,14 @@ void draw_triangle( Shader *shader_program, VAO *VAO1 )
 
 	// primitive type, starting index, amount of vertices
 	// glDrawArrays( GL_TRIANGLES, 0, 3);
+}
+
+void clean_shader( Shader *shader_program, VAO *VAO1, VBO *VBO1, EBO *EBO1 )
+{
+	VAO1->Delete();
+	VBO1->Delete();
+	EBO1->Delete();
+	shader_program->Delete();
 }
 
 // WINDOW
