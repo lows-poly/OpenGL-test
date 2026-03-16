@@ -56,7 +56,7 @@ int main (void)
 	// shader programme
 	GLuint shader_program = glCreateProgram();
 	glAttachShader( shader_program, vertex_shader );
-	glAttachShader(  shader_program, fragment_shader );
+	glAttachShader( shader_program, fragment_shader );
 	glLinkProgram( shader_program );
 
 	glDeleteShader( vertex_shader );
