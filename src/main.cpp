@@ -4,22 +4,13 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "shaders/shader.h"
+#include "shaders/VAO.h"
+#include "shaders/VBO.h"
+#include "shaders/EBO.h"
+
 const int WINDOW_SIZE[2] = { 1280, 720 };
 const char WINDOW_TITLE[] = "Renderer OpenGL 4.1";
-
-const char *vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-" gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-const char *fragmentShaderSource = "#version 330 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-" FragColor = vec4(0.8f, 0.3f, 0.02f, 1.0f);\n"
-"}\n\0";
 
 GLFWwindow* draw_window( void );
 void process_input( GLFWwindow *window );
@@ -28,10 +19,8 @@ void framebuffer_size_callback( UNUSED GLFWwindow *window, int width, int height
 	glViewport( 0, 0, width, height );
 }
 
-// void draw_triangle( void );
-
 // MAIN
-int main (void)
+int main( void )
 {
 	GLFWwindow *window = draw_window();
 	if ( !window )
@@ -39,49 +28,35 @@ int main (void)
 
 	// z, y, z
 	GLfloat vertices[] = {
-		-0.5f, -0.5f * float( sqrt(3) ) / 3, 0.0f,
-		0.5f, -0.5f * float( sqrt(3) ) /3, 0.0f,
-		0.0f, 0.5f * float( sqrt(3) ) * 2 / 3, 0.0f
+		-0.5f, -0.5f * float( sqrt(3) ) / 3, 0.0f,	// lower left corner
+		0.5f, -0.5f * float( sqrt(3) ) /3, 0.0f,	// lower right corner
+		0.0f, 0.5f * float( sqrt(3) ) * 2 / 3, 0.0f,	// upper corner
+		-0.5f / 2, 0.5f * float( sqrt(3) ) / 6, 0.0f,	// inner left
+		0.5f / 2, 0.5f * float( sqrt(3) ) /6, 0.0f,	// inner right
+		0.0f, -0.5f * float( sqrt(3) ) / 3, 0.0f,	// inner down
 	};
 
-	// shaders
-	GLuint vertex_shader = glCreateShader( GL_VERTEX_SHADER ); // OpenGL unsigned int
-	glShaderSource( vertex_shader, 1, &vertexShaderSource, NULL );
-	glCompileShader( vertex_shader );
+	GLuint indices[] = {
+		0, 3, 5, // lower left
+		3, 2, 4, // lower right
+		5, 4, 1  // upper centre
+	};
 
-	GLuint fragment_shader = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( fragment_shader, 1, &fragmentShaderSource, NULL );
-	glCompileShader( fragment_shader );
+	// shader
+	Shader shader_program( "default.vert", "default.frag" );
 
-	// shader programme
-	GLuint shader_program = glCreateProgram();
-	glAttachShader( shader_program, vertex_shader );
-	glAttachShader( shader_program, fragment_shader );
-	glLinkProgram( shader_program );
+	VAO VAO1;
+	VAO1.Bind();
 
-	glDeleteShader( vertex_shader );
-	glDeleteShader( fragment_shader );
+	VBO VBO1( vertices, sizeof(vertices) );
+	EBO EBO1( indices, sizeof(indices) );
 
-	GLuint VAO, VBO;
-	glGenVertexArrays( 1, &VAO );
-	glGenBuffers( 1, &VBO );
+	VAO1.LinkVBO( VBO1, 0 );
+	VAO1.Unbind();
+	VBO1.Unbind();
+	EBO1.Unbind();
 
-	glBindVertexArray( VAO );
-
-	glBindBuffer( GL_ARRAY_BUFFER, VBO );
-
-	// STREAM = vertices modify once and used a few times
-	// STATIC = vertices modify once and used many times
-	// DYNAMIC = vertices modify multiple times and used many times
-	glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
-
-	// pos, values/vertex, ...
-	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 );
-	glEnableVertexAttribArray( 0 );
-
-	glBindBuffer( GL_ARRAY_BUFFER, 0 );
-	glBindVertexArray( 0 );
-
+	// clear window
 	glClearColor( 0.07f, 0.13f, 0.17f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT );
 	glfwSwapBuffers( window );
@@ -93,18 +68,19 @@ int main (void)
 
 		glClearColor( 0.07f, 0.13f, 0.17f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT );
-		glUseProgram( shader_program );
-		glBindVertexArray( VAO );
+		shader_program.Activate();
+		VAO1.Bind();
 		// primitive type, starting index, amount of vertices
-		glDrawArrays( GL_TRIANGLES, 0 , 3 ); 
+		glDrawElements( GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0 );
 
 		glfwSwapBuffers( window ); // update each frame
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays( 1, &VAO );
-	glDeleteBuffers( 1, &VBO );
-	glDeleteProgram( shader_program );
+	VAO1.Delete();
+	VBO1.Delete();
+	EBO1.Delete();
+	shader_program.Delete();
 
 	glfwDestroyWindow( window ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely
@@ -153,54 +129,3 @@ void process_input( GLFWwindow *window )
 	if ( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
 		glfwSetWindowShouldClose( window, true );
 }
-
-// Triangle
-
-// void draw_triangle( void )
-// {
-// 	// x, y ,z
-// 	GLfloat vertices[] = {
-// 		-0.5f, -0.5f * float( sqrt(3) ) / 3, 0.0f,
-// 		0.5f, -0.5f * float( sqrt(3) ) /3, 0.0f,
-// 		0.0f, 0.5f 8 float( sqrt(3) ) * 2 / 3, 0.0f
-// 	};
-//
-// 	// shaders
-// 	GLuint vertex_shader = glCreateShader( GL_VERTEX_SHADER ); // OpenGL unsigned int
-// 	glShaderSource( vertex_shader, 1, &vertexShaderSource, NULL );
-// 	glCompileShader( vertex_shader );
-//
-// 	GLuint fragment_shader = glCreateShader( GL_FRAGMENT_SHADER );
-// 	glShaderSource( fragment_shader, 1, &fragmentShaderSource, NULL );
-// 	glCompileShader( fragment_shader );
-//
-// 	// shader programme
-// 	GLuint shader_program = glCreateProgram();
-// 	glAttachShader( shader_program, vertex_shader );
-// 	glAttachShader(  shader_program, fragment_shader );
-// 	glLinkProgram( shader_program );
-//
-// 	glDeleteShader( vertex_shader );
-// 	glDeleteShader( fragment_shader );
-//
-// 	GLuint VAO, VBO;
-// 	glGenVertexArrays( 1, &VAO );
-// 	glGenBuffers( 1, &VBO );
-//
-// 	glBindVertexArrays( VAO );
-//
-// 	glBindBuffer( GL_ARRAY_BUFFER, VBO );
-//
-// 	// STREAM = vertices modify once and used a few times
-// 	// STATIC = vertices modify once and used many times
-// 	// DYNAMIC = vertices modify multiple times and used many times
-// 	glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
-//
-// 	// pos, values/vertex, ...
-// 	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0 );
-// 	glEnableVertexAttribArray( 0 );
-//
-// 	glBindBuffer( GL_ARRAY_BUFFER, 0 );
-// 	glBindVertexArrays( 0 );
-// }
-//
