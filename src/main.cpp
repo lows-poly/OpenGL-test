@@ -4,24 +4,18 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+#include "shaders/shader_loader.h"
+
 const int WINDOW_SIZE[2] = { 1280, 720 };
 const char WINDOW_TITLE[] = "Renderer OpenGL 4.1";
-const char *VERTEX_SHADER_SOURCE = "#version 330 core\n"
-	"layout (location = 0) in vec3 aPos;\n"
-	"void main()\n"
-	"{\n"
-	"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-	"}\0";
-const char *FRAGMENT_SHADER_SOURCE = "#version 330 core\n"
-	"out vec4 FragColor;\n"
-	"void main()\n"
-	"{\n"
-	"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-	"}\n\0";
+
+std::string vertexSource = load_shader("shaders/vertex.glsl");
+std::string fragmentSource = load_shader("shaders/fragment.glsl");
+const char *vertexPtr = vertexSource.c_str();
+const char *fragmentPtr = fragmentSource.c_str();
 
 GLFWwindow* create_window( void );
 void process_input( GLFWwindow *window );
-
 void framebuffer_size_callback( UNUSED GLFWwindow *window, int width, int height )
 {
 	glViewport( 0, 0, width, height );
@@ -37,9 +31,6 @@ int main (void)
 		return EXIT_FAILURE;
 	}
 
-	glViewport( 0, 0, WINDOW_SIZE[0], WINDOW_SIZE[1] );
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
 	// Render Loop
 	while( !glfwWindowShouldClose( window ) ) {
 		// input
@@ -53,6 +44,7 @@ int main (void)
 		glfwPollEvents();
 	}
 
+	glfwDestroyWindow( window );
 	glfwTerminate();
 	return EXIT_SUCCESS;
 }
@@ -75,9 +67,16 @@ void draw_triangle( void )
 	glBindBuffer( GL_ARRAY_BUFFER, VBO );
 	glBufferData( GL_ARRAY_BUFFER, sizeof( vertices ), vertices, GL_STATIC_DRAW );
 
-	unsigned int vertexShader;
+	// create shader
+	unsigned int vertexShader, fragmentShader;
 	vertexShader = glCreateShader( GL_VERTEX_SHADER );
-	// glShaderSource
+	fragmentShader = glCreateShader( GL_FRAGMENT_SHADER );
+
+	// attach shader src to shader obj & compile
+	glShaderSource( vertexShader, 1, &vertexPtr, NULL );
+	glShaderSource( fragmentShader, 1, &fragmentPtr, NULL );
+	glCompileShader( vertexShader );
+	glCompileShader( fragmentShader );
 }
 
 // WINDOW
@@ -102,6 +101,7 @@ GLFWwindow* create_window( void )
 		glfwTerminate();
 		return NULL;
 	}
+
 	glfwMakeContextCurrent( window );
 	glfwSwapInterval(1);
 
@@ -109,6 +109,9 @@ GLFWwindow* create_window( void )
 		std::cout << "Failed to initialise GLAD\n";
 		return NULL;
 	}
+
+	glViewport( 0, 0, WINDOW_SIZE[0], WINDOW_SIZE[1] );
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	return window;
 }
