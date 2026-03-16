@@ -34,6 +34,8 @@ void framebuffer_size_callback( UNUSED GLFWwindow *window, int width, int height
 	glViewport( 0, 0, width, height );
 }
 
+void draw_triangle( Shader *shader_program, VAO *VAO1 );
+
 // MAIN
 int main( void )
 {
@@ -79,18 +81,14 @@ int main( void )
 
 		glClearColor( 0.07f, 0.13f, 0.17f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT );
-		shader_program.Activate();
-		VAO1.Bind();
-		// primitive type, starting index, amount of vertices
-		// glDrawArrays( GL_TRIANGLES, 0, 3);
 
-		// mode, count, type, indices
-		glDrawElements( GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0 );
+		draw_triangle( &shader_program, &VAO1 );
 
 		glfwSwapBuffers( window ); // update each frame
 		glfwPollEvents();
 	}
 
+	// Clean up
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
@@ -99,6 +97,19 @@ int main( void )
 	glfwDestroyWindow( window ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely
 	return EXIT_SUCCESS;
+}
+
+// DRAW TRIANGLE
+void draw_triangle( Shader *shader_program, VAO *VAO1 )
+{
+	shader_program->Activate();
+	VAO1->Bind();
+
+	// mode, count, type, indices
+	glDrawElements( GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0 );
+
+	// primitive type, starting index, amount of vertices
+	// glDrawArrays( GL_TRIANGLES, 0, 3);
 }
 
 // WINDOW
