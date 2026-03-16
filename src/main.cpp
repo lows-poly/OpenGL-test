@@ -11,6 +11,20 @@
 
 const int WINDOW_SIZE[2] = { 1280, 720 };
 const char WINDOW_TITLE[] = "Renderer OpenGL 4.1";
+GLfloat vertices[] = {
+	-0.5f, -0.5f * float( sqrt(3) ) / 3, 0.0f,	// lower left corner
+	0.5f, -0.5f * float( sqrt(3) ) /3, 0.0f,	// lower right corner
+	0.0f, 0.5f * float( sqrt(3) ) * 2 / 3, 0.0f,	// upper corner
+	-0.5f / 2, 0.5f * float( sqrt(3) ) / 6, 0.0f,	// inner left
+	0.5f / 2, 0.5f * float( sqrt(3) ) /6, 0.0f,	// inner right
+	0.0f, -0.5f * float( sqrt(3) ) / 3, 0.0f,	// inner down
+};
+
+GLuint indices[] = {
+	0, 3, 5, // lower left
+	3, 2, 4, // lower right
+	5, 4, 1  // upper centre
+};
 
 GLFWwindow* draw_window( void );
 void process_input( GLFWwindow *window );
@@ -22,28 +36,23 @@ void framebuffer_size_callback( UNUSED GLFWwindow *window, int width, int height
 // MAIN
 int main( void )
 {
+	if ( !glfwInit() ) {
+		std::cout << "GLFW init failed\n";
+		return EXIT_FAILURE;
+	}
+
+	// version hint
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
+	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // macos
+
 	GLFWwindow *window = draw_window();
 	if ( !window )
 		return EXIT_FAILURE;
 
-	// z, y, z
-	GLfloat vertices[] = {
-		-0.5f, -0.5f * float( sqrt(3) ) / 3, 0.0f,	// lower left corner
-		0.5f, -0.5f * float( sqrt(3) ) /3, 0.0f,	// lower right corner
-		0.0f, 0.5f * float( sqrt(3) ) * 2 / 3, 0.0f,	// upper corner
-		-0.5f / 2, 0.5f * float( sqrt(3) ) / 6, 0.0f,	// inner left
-		0.5f / 2, 0.5f * float( sqrt(3) ) /6, 0.0f,	// inner right
-		0.0f, -0.5f * float( sqrt(3) ) / 3, 0.0f,	// inner down
-	};
-
-	GLuint indices[] = {
-		0, 3, 5, // lower left
-		3, 2, 4, // lower right
-		5, 4, 1  // upper centre
-	};
-
 	// shader
-	Shader shader_program( "default.vert", "default.frag" );
+	Shader shader_program( "include/shaders/default.vert.txt", "include/shaders/default.frag.txt" );
 
 	VAO VAO1;
 	VAO1.Bind();
@@ -62,7 +71,7 @@ int main( void )
 	glfwSwapBuffers( window );
 
 	// Render Loop
-	while( !glfwWindowShouldClose( window ) ) {
+	while( !glfwWindowShouldClose(window) ) {
 		// input
 		process_input( window );
 
@@ -71,6 +80,9 @@ int main( void )
 		shader_program.Activate();
 		VAO1.Bind();
 		// primitive type, starting index, amount of vertices
+		// glDrawArrays( GL_TRIANGLES, 0, 3);
+
+		// mode, count, type, indices
 		glDrawElements( GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0 );
 
 		glfwSwapBuffers( window ); // update each frame
@@ -91,19 +103,8 @@ int main( void )
 
 GLFWwindow* draw_window( void )
 {
-	if ( !glfwInit() ) {
-		std::cout << "GLFW init failed\n";
-		return NULL;
-	}
-
-	// OpenGL Version Hints
-	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // macos
-
 	GLFWwindow *window = glfwCreateWindow( WINDOW_SIZE[0], WINDOW_SIZE[1],
-					      WINDOW_TITLE, NULL, NULL );
+					       WINDOW_TITLE, NULL, NULL );
 	if ( !window ) {
 		std::cout << "Failed to create GLFW window\n";
 		glfwTerminate();
@@ -113,10 +114,12 @@ GLFWwindow* draw_window( void )
 	glfwMakeContextCurrent( window );
 	glfwSwapInterval(1);
 
-	if ( !gladLoadGLLoader(( GLADloadproc ) glfwGetProcAddress )) {
+	if ( !gladLoadGLLoader((GLADloadproc) glfwGetProcAddress )) {
 		std::cout << "Failed to initialise GLAD\n";
 		return NULL;
 	}
+
+	gladLoadGL();
 
 	glViewport( 0, 0, WINDOW_SIZE[0], WINDOW_SIZE[1] );
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
