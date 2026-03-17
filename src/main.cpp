@@ -34,7 +34,7 @@ void framebuffer_size_callback( UNUSED GLFWwindow *window, int width, int height
 
 void draw_triangle( Shader *shader_program, VAO *VAO_object, GLuint uniID );
 void clean_shader( Shader *shader_program, VAO *VAO_object, VBO *VBO_object,
-		   EBO *EBO_object );
+                   EBO *EBO_object );
 
 // MAIN
 int main( void )
@@ -110,7 +110,7 @@ void draw_triangle( Shader *shader_program, VAO *VAO_object, GLuint uniID )
 }
 
 void clean_shader( Shader *shader_program, VAO *VAO_object, VBO *VBO_object,
-		   EBO *EBO_object )
+                   EBO *EBO_object )
 {
 	VAO_object->Delete();
 	VBO_object->Delete();
@@ -123,7 +123,7 @@ void clean_shader( Shader *shader_program, VAO *VAO_object, VBO *VBO_object,
 GLFWwindow* draw_window( void )
 {
 	GLFWwindow *window = glfwCreateWindow( WINDOW_SIZE[0], WINDOW_SIZE[1],
-					       WINDOW_TITLE, NULL, NULL );
+	                                       WINDOW_TITLE, NULL, NULL );
 	if ( !window ) {
 		std::cout << "Failed to create GLFW window\n";
 		glfwTerminate();
