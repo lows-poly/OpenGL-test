@@ -13,10 +13,10 @@ const int WINDOW_SIZE[2] = { 1280, 720 };
 const char WINDOW_TITLE[] = "Renderer OpenGL 4.1";
 
 GLfloat vertices[] = {
-	// x	y	z	r     g     b
-	0.5f,	-0.5f,	0.0f,	1.0f, 0.0f, 0.0f,
-	0.0f,	0.5f,	0.0f,	0.1f, 0.0f, 0.0f,
-	-0.5f,	-0.5f,	0.0f,	1.0f, 0.0f, 0.0f
+	// x    y     z       r     g     b
+	0.5f,  -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
+	0.0f,   0.5f, 0.0f,   0.1f, 0.0f, 0.0f,
+	-0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f
 };
 
 GLuint indices[] = {
