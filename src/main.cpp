@@ -12,15 +12,17 @@
 const int WINDOW_SIZE[2] = { 1280, 720 };
 const char WINDOW_TITLE[] = "Renderer OpenGL 4.1";
 
+const float TRIANGLE_SCALE = 1.0f;
+
 GLfloat vertices[] = {
 	// x    y     z       r     g     b
-	0.5f,  -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
-	0.0f,   0.5f, 0.0f,   0.1f, 0.0f, 0.0f,
-	-0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f
+	0.5f,  -0.5f, 0.0f,   0.1f, 0.0f, 0.0f,
+	0.0f,   0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
+	-0.5f, -0.5f, 0.0f,   0.1f, 0.0f, 0.0f
 };
 
 GLuint indices[] = {
-	0, 2, 1
+	0, 1, 2
 };
 
 GLFWwindow* draw_window( void );
@@ -30,7 +32,7 @@ void framebuffer_size_callback( UNUSED GLFWwindow *window, int width, int height
 	glViewport( 0, 0, width, height );
 }
 
-void draw_triangle( Shader *shader_program, VAO *VAO_object );
+void draw_triangle( Shader *shader_program, VAO *VAO_object, GLuint uniID );
 void clean_shader( Shader *shader_program, VAO *VAO_object, VBO *VBO_object,
 		   EBO *EBO_object );
 
@@ -57,12 +59,21 @@ int main( void )
 			       "include/shaders/default.frag.txt" );
 
 	VAO VAO_object;
+	VAO_object.Bind();
 
 	VBO VBO_object( vertices, sizeof(vertices) );
 	EBO EBO_object( indices, sizeof(indices) );
 
-	VAO_object.LinkVBO( &VBO_object );
+	VAO_object.LinkAttributes( &VBO_object, 0, 3, GL_FLOAT, 6 * sizeof(float),
+	                           (void*)0 );
+	VAO_object.LinkAttributes( &VBO_object, 1, 3, GL_FLOAT, 6 * sizeof(float),
+	                           (void*)(3 * sizeof(float)) );
+
+	VAO_object.Unbind();
 	EBO_object.Unbind();
+
+	// uniID
+	GLuint uniID = glGetUniformLocation( shader_program.ID, "scale" );
 
 	// Render Loop
 	while( !glfwWindowShouldClose(window) ) {
@@ -72,7 +83,7 @@ int main( void )
 		glClearColor( 0.07f, 0.13f, 0.17f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT );
 
-		draw_triangle( &shader_program, &VAO_object );
+		draw_triangle( &shader_program, &VAO_object, uniID );
 
 		glfwSwapBuffers( window ); // update each frame
 		glfwPollEvents();
@@ -85,16 +96,17 @@ int main( void )
 }
 
 // DRAW TRIANGLE
-void draw_triangle( Shader *shader_program, VAO *VAO_object )
+void draw_triangle( Shader *shader_program, VAO *VAO_object, GLuint uniID )
 {
 	shader_program->Activate();
+	glUniform1f( uniID, TRIANGLE_SCALE );
 	VAO_object->Bind();
 
 	// mode, count, type, indices
-	// glDrawElements( GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0 );
+	glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0 );
 
 	// primitive type, starting index, amount of vertices
-	glDrawArrays( GL_TRIANGLES, 0, 3);
+	// glDrawArrays( GL_TRIANGLES, 0, 3);
 }
 
 void clean_shader( Shader *shader_program, VAO *VAO_object, VBO *VBO_object,
