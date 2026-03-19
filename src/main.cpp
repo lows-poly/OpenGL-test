@@ -57,8 +57,7 @@ int main( void )
 	vao.unbind();
 	ebo.unbind();
 
-	// uniID
-	GLuint uniID = glGetUniformLocation( shader.ID, "scale" );
+	GLuint uniform_id = glGetUniformLocation( shader.ID, "scale" );
 
 	// Render Loop
 	while( !glfwWindowShouldClose(window_ptr) ) {
@@ -68,7 +67,7 @@ int main( void )
 		glClearColor( 0.07f, 0.13f, 0.17f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT );
 
-		renderer_draw( &shader, &vao, &ebo, uniID, TRIANGLE_SCALE,
+		renderer_draw( &shader, &vao, &ebo, uniform_id, TRIANGLE_SCALE,
 		               GL_TRIANGLES );
 
 		glfwSwapBuffers( window_ptr ); // update each frame
