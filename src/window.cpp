@@ -1,0 +1,45 @@
+#define UNUSED __attribute__((unused))
+
+#include <iostream>
+#include "window.h"
+
+GLFWwindow* create_window( const window_config &config )
+{
+	// hints
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
+	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
+	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
+	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // macos
+
+	GLFWwindow *window_ptr = glfwCreateWindow( config.width, config.height,
+	                                           config.title, NULL, NULL );
+	if ( !window_ptr ) {
+		std::cerr << "Failed to create GLFW window\n";
+		glfwTerminate();
+		return NULL;
+	}
+
+	glfwMakeContextCurrent( window_ptr );
+	glfwSwapInterval(1);
+
+	if ( !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) ) {
+		std::cerr << "Failed to initialise GLAD\n";
+		return NULL;
+	}
+
+	glViewport( 0, 0, config.width, config.height );
+	glfwSetFramebufferSizeCallback( window_ptr, framebuffer_size_callback );
+
+	return window_ptr;
+}
+
+void window_input_process( GLFWwindow *window_ptr )
+{
+	if ( glfwGetKey( window_ptr, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
+		glfwSetWindowShouldClose( window_ptr, true );
+}
+
+void framebuffer_size_callback( UNUSED GLFWwindow *window_ptr, int width, int height )
+{
+	glViewport( 0, 0, width, height );
+}

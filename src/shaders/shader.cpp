@@ -1,4 +1,4 @@
-#include "shaders/shader.h"
+#include "shader.h"
 
 std::string get_file_contents( const char *filename )
 {
@@ -43,12 +43,12 @@ Shader::Shader( const char *vertex_file, const char *fragment_file )
 	glDeleteShader( fragment_shader );
 }
 
-void Shader::Activate()
+void Shader::enable()
 {
 	glUseProgram( ID );
 }
 
-void Shader::Delete()
+void Shader::destroy()
 {
 	glDeleteProgram( ID );
 }

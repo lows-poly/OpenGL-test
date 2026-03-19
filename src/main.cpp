@@ -1,16 +1,13 @@
-#define UNUSED __attribute__((unused))
-
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include "window.h"
 
 #include "shaders/shader.h"
 #include "shaders/VAO.h"
 #include "shaders/VBO.h"
 #include "shaders/EBO.h"
-
-const int WINDOW_SIZE[2] = { 1280, 720 };
-const char WINDOW_TITLE[] = "Renderer OpenGL 4.1";
 
 const float TRIANGLE_SCALE = 1.0f;
 
@@ -25,16 +22,9 @@ GLuint indices[] = {
 	0, 1, 2
 };
 
-GLFWwindow* draw_window( void );
-void process_input( GLFWwindow *window );
-void framebuffer_size_callback( UNUSED GLFWwindow *window, int width, int height )
-{
-	glViewport( 0, 0, width, height );
-}
-
-void draw_triangle( Shader *shader_program, VAO *VAO_object, GLuint uniID );
-void clean_shader( Shader *shader_program, VAO *VAO_object, VBO *VBO_object,
-                   EBO *EBO_object );
+void draw_triangle( Shader *shader_ptr, VAO *vao_ptr, GLuint uniID );
+void clean_shader( Shader *shader_ptr, VAO *vao_ptr, VBO *vbo_ptr,
+                   EBO *ebo_ptr );
 
 // MAIN
 int main( void )
@@ -44,63 +34,62 @@ int main( void )
 		return EXIT_FAILURE;
 	}
 
-	// version hint
-	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // macos
+	window_config config;
+	config.width = 800;
+	config.height = 800;
+	config.title = "Renderer OpenGL 4.1";
 
-	GLFWwindow *window = draw_window();
-	if ( !window )
+	GLFWwindow *window_ptr = create_window( config );
+	if ( !window_ptr )
 		return EXIT_FAILURE;
 
 	// shader
-	Shader shader_program( "include/shaders/default.vert.txt",
-			       "include/shaders/default.frag.txt" );
+	Shader shader( "src/shaders/default.vert.txt",
+	               "src/shaders/default.frag.txt" );
 
-	VAO VAO_object;
-	VAO_object.Bind();
+	VAO vao;
+	vao.bind();
 
-	VBO VBO_object( vertices, sizeof(vertices) );
-	EBO EBO_object( indices, sizeof(indices) );
+	VBO vbo( vertices, sizeof(vertices) );
+	EBO ebo( indices, sizeof(indices) );
 
-	VAO_object.LinkAttributes( &VBO_object, 0, 3, GL_FLOAT, 6 * sizeof(float),
-	                           (void*)0 );
-	VAO_object.LinkAttributes( &VBO_object, 1, 3, GL_FLOAT, 6 * sizeof(float),
-	                           (void*)(3 * sizeof(float)) );
+	vao.LinkAttributes( &vbo, 0, 3, GL_FLOAT, 6 * sizeof(float),
+	                    (void*)0 );
+	vao.LinkAttributes( &vbo, 1, 3, GL_FLOAT, 6 * sizeof(float),
+	                    (void*)(3 * sizeof(float)) );
 
-	VAO_object.Unbind();
-	EBO_object.Unbind();
+	vao.unbind();
+	ebo.unbind();
 
 	// uniID
-	GLuint uniID = glGetUniformLocation( shader_program.ID, "scale" );
+	GLuint uniID = glGetUniformLocation( shader.ID, "scale" );
 
 	// Render Loop
-	while( !glfwWindowShouldClose(window) ) {
+	while( !glfwWindowShouldClose(window_ptr) ) {
 		// input
-		process_input( window );
+		window_input_process( window_ptr );
 
 		glClearColor( 0.07f, 0.13f, 0.17f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT );
 
-		draw_triangle( &shader_program, &VAO_object, uniID );
+		draw_triangle( &shader, &vao, uniID );
 
-		glfwSwapBuffers( window ); // update each frame
+		glfwSwapBuffers( window_ptr ); // update each frame
 		glfwPollEvents();
 	}
 
-	clean_shader( &shader_program, &VAO_object, &VBO_object, &EBO_object );
-	glfwDestroyWindow( window ); // delete window before ending the program
+	clean_shader( &shader, &vao, &vbo, &ebo );
+	glfwDestroyWindow( window_ptr ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely
 	return EXIT_SUCCESS;
 }
 
 // DRAW TRIANGLE
-void draw_triangle( Shader *shader_program, VAO *VAO_object, GLuint uniID )
+void draw_triangle( Shader *shader_ptr, VAO *vao_ptr, GLuint uniID )
 {
-	shader_program->Activate();
+	shader_ptr->enable();
 	glUniform1f( uniID, TRIANGLE_SCALE );
-	VAO_object->Bind();
+	vao_ptr->bind();
 
 	// mode, count, type, indices
 	glDrawElements( GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0 );
@@ -109,45 +98,11 @@ void draw_triangle( Shader *shader_program, VAO *VAO_object, GLuint uniID )
 	// glDrawArrays( GL_TRIANGLES, 0, 3);
 }
 
-void clean_shader( Shader *shader_program, VAO *VAO_object, VBO *VBO_object,
-                   EBO *EBO_object )
+void clean_shader( Shader *shader_ptr, VAO *vao_ptr, VBO *vbo_ptr,
+                   EBO *ebo_ptr )
 {
-	VAO_object->Delete();
-	VBO_object->Delete();
-	EBO_object->Delete();
-	shader_program->Delete();
-}
-
-// WINDOW
-
-GLFWwindow* draw_window( void )
-{
-	GLFWwindow *window = glfwCreateWindow( WINDOW_SIZE[0], WINDOW_SIZE[1],
-	                                       WINDOW_TITLE, NULL, NULL );
-	if ( !window ) {
-		std::cout << "Failed to create GLFW window\n";
-		glfwTerminate();
-		return NULL;
-	}
-
-	glfwMakeContextCurrent( window );
-	glfwSwapInterval(1);
-
-	if ( !gladLoadGLLoader((GLADloadproc) glfwGetProcAddress )) {
-		std::cout << "Failed to initialise GLAD\n";
-		return NULL;
-	}
-
-	gladLoadGL();
-
-	glViewport( 0, 0, WINDOW_SIZE[0], WINDOW_SIZE[1] );
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-	return window;
-}
-
-void process_input( GLFWwindow *window )
-{
-	if ( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
-		glfwSetWindowShouldClose( window, true );
+	vao_ptr->destroy();
+	vbo_ptr->destroy();
+	ebo_ptr->destroy();
+	shader_ptr->destroy();
 }

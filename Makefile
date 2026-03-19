@@ -13,7 +13,7 @@ CC := g++
 CFLAGS := -Wall -Wextra -I$(INCLUDE_DIR) -I$(GLFW_INCLUDE_DIR) -I$(SOKOL_INCLUDE_DIR)
 LDFLAGS := -L$(GLFW_LIB_DIR) -lglfw -ldl -framework OpenGL -framework Cocoa
 
-SRCS := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*.cpp)
+SRCS := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*.cpp) $(wildcard $(SRC_DIR)/shaders/*.cpp)
 OBJS := $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, \
 	$(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS)))
 
@@ -24,11 +24,15 @@ $(BUILD_DIR)/$(PROJECT_NAME): $(OBJS)
 	$(CC) $(OBJS) -o $(BUILD_DIR)/$(PROJECT_NAME) $(LDFLAGS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p $(BUILD_DIR)
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	mkdir -p $(BUILD_DIR)
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/shaders/%.cpp
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
