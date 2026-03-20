@@ -49,9 +49,9 @@ int main( void )
 	VBO vbo( vertices, sizeof(vertices) );
 	EBO ebo( indices, sizeof(indices) );
 
-	vao.LinkAttributes( &vbo, 0, 3, GL_FLOAT, 6 * sizeof(float),
+	vao.link_attributes( &vbo, 0, 3, GL_FLOAT, 6 * sizeof(float),
 	                    (void*)0 );
-	vao.LinkAttributes( &vbo, 1, 3, GL_FLOAT, 6 * sizeof(float),
+	vao.link_attributes( &vbo, 1, 3, GL_FLOAT, 6 * sizeof(float),
 	                    (void*)(3 * sizeof(float)) );
 
 	vao.unbind();
@@ -60,7 +60,7 @@ int main( void )
 	GLuint uniform_id = glGetUniformLocation( shader.ID, "scale" );
 
 	// Render Loop
-	while( !glfwWindowShouldClose(window_ptr) ) {
+	while( !glfwWindowShouldClose( window_ptr ) ) {
 		// input
 		window_input_process( window_ptr );
 
