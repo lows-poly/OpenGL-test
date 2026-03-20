@@ -1,6 +1,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb/stb_image.h>
 
 #include "window.h"
 
@@ -23,6 +24,12 @@ GLuint indices[] = {
 	0, 1, 2
 };
 
+GLfloat texture_coords[] = {
+	0.0f, 0.0f, // lower-left corner
+	1.0f, 0.0f, // lower-right corner
+	0.5f, 1.0f  // top-center corner
+};
+
 int main( void )
 {
 	if ( !glfwInit() ) {
@@ -40,8 +47,7 @@ int main( void )
 		return EXIT_FAILURE;
 
 	// shader
-	Shader shader( "src/shaders/default.vert.txt",
-	               "src/shaders/default.frag.txt" );
+	Shader shader;
 
 	VAO vao;
 	vao.bind();
@@ -57,7 +63,31 @@ int main( void )
 	vao.unbind();
 	ebo.unbind();
 
-	GLuint uniform_id = glGetUniformLocation( shader.ID, "scale" );
+	// texture
+	// int img_width, img_height, num_colour_chnls;
+	// unsigned char* data_ptr = stbi_load( "assets/wall.jpg", &img_width,
+	//                                       &img_height, &num_colour_chnls, 0 );
+	//
+	// GLuint texture;
+	// glGenTextures( 1, &texture );
+	// glActiveTexture( GL_TEXTURES );
+	// glBindTextures( GL_TEXTURE_2D, texture );
+	//
+	// glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	// glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+	// glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+	//                  GL_LINEAR_MIPMAP_LINEAR );
+	// glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	//
+	// if ( data_ptr ) {
+	// 	glTexImage2D( GL_TEXTURES, 0, GL_RGB, img_width, img_height, 0,
+	// 	              GL_RGB, GL_UNSIGNED_BYTE, data_ptr );
+	//
+	// 	glGenerateMipmap( GL_TEXTURE_2D );
+	// } else {
+	// 	std:cerr << "FAILED TO LOAD TEXTURE" << std::endl;
+	// }
+	// stbi_image_free( data_ptr );
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
@@ -67,14 +97,14 @@ int main( void )
 		glClearColor( 0.07f, 0.13f, 0.17f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT );
 
-		renderer_draw( &shader, &vao, &ebo, uniform_id, TRIANGLE_SCALE,
-		               GL_TRIANGLES );
+		renderer_draw( &shader, &vao, &ebo, GL_TRIANGLES );
 
 		glfwSwapBuffers( window_ptr ); // update each frame
 		glfwPollEvents();
 	}
 
 	renderer_destroy( &shader, &vao, &vbo, &ebo );
+	// glDeleteTextures( 1, &texture );
 	glfwDestroyWindow( window_ptr ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely
 	return EXIT_SUCCESS;
