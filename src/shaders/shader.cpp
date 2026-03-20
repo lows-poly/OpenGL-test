@@ -1,81 +1,159 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
 #include "shader.h"
 
-std::string get_file_contents( const char *filename )
+typedef std::string string;
+
+// FUNCTIONS
+
+static const char *u_names[UNIFORM_COUNT] = {
+	[UNIFORM_SCALE] = "scale",
+	[UNIFORM_COLOUR] = "color",
+	[UNIFORM_MODEL] = "u_model",
+	[UNIFORM_VIEW] = "u_view",
+	[UNIFORM_PROJECTION] = "u_projection"
+};
+
+static string read_file( const char *path_ptr )
 {
-	std::ifstream in( filename, std::ios::binary );
-	if (in) {
-		std::string contents;
-		in.seekg( 0, std::ios::end );
-		contents.resize( in.tellg() );
-		in.seekg( 0, std::ios::beg );
-		in.read( &contents[0], contents.size() );
-		in.close();
-		return ( contents );
-	}
-	throw (errno);
+	std::ifstream in( path_ptr, std::ios::binary );
+
+	if ( !in )
+		throw std::runtime_error( "FAILED TO READ FILE" );
+
+	string contents;
+
+	in.seekg( 0, std::ios::end );
+	contents.resize( in.tellg() );
+	in.seekg( 0, std::ios::beg );
+	in.read( &contents[0], contents.size() );
+	in.close();
+
+	return ( contents );
 }
 
-Shader::Shader( const char *vertex_file, const char *fragment_file )
-{
-	std::string vertex_code = get_file_contents( vertex_file );
-	std::string fragment_code = get_file_contents( fragment_file );
+// Constructor
 
-	const char *vertex_source = vertex_code.c_str();
-	const char *fragment_source = fragment_code.c_str();
+Shader::Shader( void )
+{
+	string vertex_code = read_file( "src/shaders/default.vert.txt" );
+	string fragment_code = read_file( "src/shaders/default.frag.txt" );
+
+	const char *v_src_ptr = vertex_code.c_str();
+	const char *f_src_ptr = fragment_code.c_str();
+
+	if ( !v_src_ptr || !f_src_ptr ) {
+		std::cerr << "FAILED TO GET SHADER SOURCES" << std::endl;
+		return;
+	}
 
 	// shaders
-	GLuint vertex_shader = glCreateShader( GL_VERTEX_SHADER ); // OpenGL unsigned int
-	glShaderSource( vertex_shader, 1, &vertex_source, NULL );
-	glCompileShader( vertex_shader );
-	this->compile_errors( vertex_shader, "VERTEX" );
-
-	GLuint fragment_shader = glCreateShader( GL_FRAGMENT_SHADER );
-	glShaderSource( fragment_shader, 1, &fragment_source, NULL );
-	glCompileShader( fragment_shader );
-	this->compile_errors( fragment_shader, "FRAGMENT" );
+	GLuint vertex_shader = compile_shader( GL_VERTEX_SHADER, v_src_ptr );
+	GLuint fragment_shader = compile_shader( GL_FRAGMENT_SHADER, f_src_ptr );
 
 	// shader programme
-	ID = glCreateProgram();
-	glAttachShader( ID, vertex_shader );
-	glAttachShader( ID, fragment_shader );
-	glLinkProgram( ID );
-	this->compile_errors( fragment_shader, "PROGRAM" );
+	GLuint programme = glCreateProgram();
+	glAttachShader( programme, vertex_shader );
+	glAttachShader( programme, fragment_shader );
+	glLinkProgram( programme );
+	this->compile_errors( programme, "PROGRAM" );
 
 	// clean up unused
 	glDeleteShader( vertex_shader );
 	glDeleteShader( fragment_shader );
+
+	this->ID = programme;
+	this->cache_uniforms();
 }
 
-void Shader::enable()
+// PUBLIC METHODS
+
+void Shader::enable( void )
 {
-	glUseProgram( ID );
+	glUseProgram( this->ID );
 }
 
-void Shader::compile_errors( unsigned int shader_id, const string& type )
+void Shader::set_float( Uniform type, float value )
+{
+	GLint loc = this->uniforms[type];
+
+	if ( loc != -1 )
+		glUniform1f( loc, value );
+}
+
+void Shader::set_vec3(Uniform type, float x, float y, float z)
+{
+	GLint loc = uniforms[type];
+	if ( loc != -1 )
+		glUniform3f( loc, x, y, z );
+}
+
+void Shader::set_mat4(Uniform type, const float *mat)
+{
+	GLint loc = uniforms[type];
+	if ( loc != -1 )
+		glUniformMatrix4fv( loc, 1, GL_FALSE, mat );
+}
+
+void Shader::cache_uniforms( void )
+{
+	for ( int i = 0; i < UNIFORM_COUNT; i++ ) {
+		this->uniforms[i] = glGetUniformLocation( this->ID, u_names[i] );
+	}
+}
+
+void Shader::destroy( void )
+{
+	glDeleteProgram( this->ID );
+}
+
+// PRIVATE METHODS
+
+GLuint Shader::compile_shader( GLenum type, const char *src_ptr )
+{
+	GLuint id = glCreateShader( type );
+	glShaderSource( id, 1, &src_ptr, NULL );
+	glCompileShader( id );
+
+	switch ( type ) {
+	case GL_VERTEX_SHADER:
+		this->compile_errors( id, "VERTEX" );
+		break;
+	case GL_FRAGMENT_SHADER:
+		this->compile_errors( id, "FRAGMENT" );
+		break;
+	default:
+		std::cerr << "UNKNOWN SHADER" << std::endl;
+		break;
+	}
+
+	return id;
+}
+
+void Shader::compile_errors( unsigned int shader, const string& type )
 {
 	GLint is_compiled;
 	char info_log[1024];
 
 	if ( type != "PROGRAM" ) {
-		glGetShaderiv( shader_id, GL_COMPILE_STATUS, &is_compiled );
+		glGetShaderiv( shader, GL_COMPILE_STATUS, &is_compiled );
 
 		if ( is_compiled != GL_FALSE )
 			return;
 
-		glGetShaderInfoLog( shader_id, 1024, NULL, info_log );
-		std::cerr << "SHADER_COMPILATION_ERROR: " << type << std::endl;
+		glGetShaderInfoLog( shader, 1024, NULL, info_log );
+		std::cerr << "SHADER_COMPILATION_ERROR: " << type << "\n";
+		std::cerr << info_log << type << std::endl;
 	} else {
-		glGetProgramiv( shader_id, GL_LINK_STATUS, &is_compiled );
+		glGetProgramiv( shader, GL_LINK_STATUS, &is_compiled );
 
 		if ( is_compiled != GL_FALSE )
 			return;
 
-		glGetShaderInfoLog( shader_id, 1024, NULL, info_log );
-		std::cerr << "SHADER_LINKING_ERROR: " << type << std::endl;
+		glGetShaderInfoLog( shader, 1024, NULL, info_log );
+		std::cerr << "SHADER_LINKING_ERROR: " << type << "\n";
+		std::cerr << info_log << type << std::endl;
 	}
-}
-
-void Shader::destroy()
-{
-	glDeleteProgram( ID );
 }
