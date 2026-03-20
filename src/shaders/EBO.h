@@ -8,7 +8,7 @@ class EBO {
 		GLsizei count;
 		EBO( const GLuint *indices_ptr, GLsizeiptr size);
 
-		void bind();
-		void unbind();
-		void destroy();
+		void bind( void );
+		void unbind( void );
+		void destroy( void );
 };

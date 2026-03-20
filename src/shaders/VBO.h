@@ -7,7 +7,7 @@ class VBO {
 		GLuint ID;
 		VBO( GLfloat *vertices_ptr, GLsizeiptr size );
 
-		void bind();
-		void unbind();
-		void destroy();
+		void bind( void );
+		void unbind( void );
+		void destroy( void );
 };
