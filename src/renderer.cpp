@@ -1,10 +1,10 @@
 #include "renderer.h"
+#include "shaders/shader.h"
 
-void renderer_draw( Shader *shader_ptr, VAO *vao_ptr, EBO *ebo_ptr,
-                    GLuint uniform_id, float scale, GLenum mode)
+void renderer_draw( Shader *shader_ptr, VAO *vao_ptr, EBO *ebo_ptr, GLenum mode)
 {
 	shader_ptr->enable();
-	glUniform1f( uniform_id, scale );
+	shader_ptr->set_float( UNIFORM_SCALE, 1.5f );
 	vao_ptr->bind();
 
 	// draw mode, count, type, indices
