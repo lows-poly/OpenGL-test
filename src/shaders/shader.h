@@ -6,8 +6,11 @@
 #include <sstream>
 #include <iostream>
 #include <cerrno>
+#include <string>
 
-std::string get_file_contents( const char *filename );
+typedef std::string string;
+
+string get_file_contents( const char *filename );
 
 class Shader {
 	public:
@@ -16,4 +19,7 @@ class Shader {
 
 		void enable();
 		void destroy();
+
+	private:
+		void compile_errors( unsigned int shader_id, const string &type );
 };

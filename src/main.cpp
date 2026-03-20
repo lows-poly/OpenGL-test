@@ -13,10 +13,10 @@
 const float TRIANGLE_SCALE = 1.0f;
 
 GLfloat vertices[] = {
-	// x    y     z       r     g     b
-	0.5f,  -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,
-	0.0f,   0.5f, 0.0f,   1.0f, 0.0f, 0.0f,
-	-0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f
+	// x    y     z        r     g     b
+	0.5f,  -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,
+	0.0f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,
+	-0.5f, -0.5f, 0.0f,    0.0f, 1.0f, 0.0f
 };
 
 GLuint indices[] = {
@@ -50,9 +50,9 @@ int main( void )
 	EBO ebo( indices, sizeof(indices) );
 
 	vao.link_attributes( &vbo, 0, 3, GL_FLOAT, 6 * sizeof(float),
-	                    (void*)0 );
+	                     (void*)0 );
 	vao.link_attributes( &vbo, 1, 3, GL_FLOAT, 6 * sizeof(float),
-	                    (void*)(3 * sizeof(float)) );
+	                     (void*)(3 * sizeof(float)) );
 
 	vao.unbind();
 	ebo.unbind();
