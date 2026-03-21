@@ -1,20 +1,19 @@
 #include "renderer.h"
 #include "shaders/shader.h"
 
-void renderer_draw( Shader *shader_ptr, VAO *vao_ptr, EBO *ebo_ptr, GLenum mode)
+void renderer_draw( Shader *shader_ptr, Mesh *mesh_ptr, GLenum mode )
 {
 	shader_ptr->enable();
 	shader_ptr->set_float( UNIFORM_SCALE, 1.5f );
-	vao_ptr->bind();
+	mesh_ptr->bind_vao();
 
 	// draw mode, count, type, indices
-	glDrawElements( mode, ebo_ptr->count, GL_UNSIGNED_INT, 0 );
+	glDrawElements( mode, mesh_ptr->get_ind_counts(), GL_UNSIGNED_INT, 0 );
+	mesh_ptr->unbind_vao();
 }
 
-void renderer_destroy( Shader *shader_ptr, VAO *vao_ptr, VBO *vbo_ptr, EBO *ebo_ptr )
+void renderer_destroy( Shader *shader_ptr, Mesh *mesh_ptr )
 {
-	vao_ptr->destroy();
-	vbo_ptr->destroy();
-	ebo_ptr->destroy();
+	mesh_ptr->destroy_buffers();
 	shader_ptr->destroy();
 }
