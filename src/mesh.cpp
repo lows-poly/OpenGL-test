@@ -24,8 +24,38 @@ void Mesh::get_transform( mat4 out ) const
 {
 	glm_mat4_identity( out );
 	glm_translate( out, (float *)position );
-	glm_rotate( out, rotation, (vec3){ 0.0f, 0.0f, 1.0f } );
+
+	glm_rotate( out, rotation[0], (vec3){ 1.0f, 0.0f, 0.0f } );
+	glm_rotate( out, rotation[1], (vec3){ 0.0f, 1.0f, 0.0f } );
+	glm_rotate( out, rotation[2], (vec3){ 0.0f, 0.0f, 1.0f } );
+
 	glm_scale( out, (float *)scale );
+}
+
+void Mesh::set_position( float x, float y, float z )
+{
+	this->position[0] = x;
+	this->position[1] = y;
+	this->position[2] = z;
+}
+
+void Mesh::set_rotation( float x, float y, float z )
+{
+	this->rotation[0] = x;
+	this->rotation[1] = y;
+	this->rotation[2] = z;
+}
+
+void Mesh::set_scale( float x, float y, float z )
+{
+	this->scale[0] = x;
+	this->scale[1] = y;
+	this->scale[2] = z;
+}
+
+void Mesh::set_scale_uniform( float u_scale )
+{
+	glm_vec3_fill( this->scale, u_scale ); 
 }
 
 void Mesh::bind_vao( void ) const

@@ -43,9 +43,9 @@ int main( void )
 	);
 
 	// Culliing
-	glEnable( GL_CULL_FACE );
-	glCullFace( GL_BACK );
-	glFrontFace( GL_CCW );
+	// glEnable( GL_CULL_FACE );
+	// glCullFace( GL_BACK );
+	// glFrontFace( GL_CCW );
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
@@ -60,9 +60,10 @@ int main( void )
 		// smallest: base - amp;
 		// biggest: base + amp;
 		float time = (float) glfwGetTime();
-		float scale = 1.0f + 0.5f * sinf( time );
+		// float scale = 1.0f + 0.5f * sinf( time );
 
-		glm_vec3_fill( mesh.scale, scale );
+		mesh.set_rotation( 0.0f, time * 0.2, -time * 0.5 );
+		// mesh.set_scale_uniform( scale * 0.5 );
 		renderer_draw( &shader, &mesh, GL_TRIANGLES );
 
 		glfwSwapBuffers( window_ptr ); // update each frame
