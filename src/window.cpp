@@ -27,7 +27,9 @@ GLFWwindow* create_window( const window_config &config )
 		return NULL;
 	}
 
-	glViewport( 0, 0, config.width, config.height );
+	int fb_width, fb_height;
+	glfwGetFramebufferSize( window_ptr, &fb_width, &fb_height );
+	glViewport( 0, 0, fb_width, fb_height );
 	glfwSetFramebufferSizeCallback( window_ptr, framebuffer_size_callback );
 
 	return window_ptr;
