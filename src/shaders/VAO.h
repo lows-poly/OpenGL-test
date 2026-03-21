@@ -11,7 +11,7 @@ class VAO {
 		void link_attributes( VBO *vbo_ptr, GLuint layout,
 		                      GLuint num_components, GLenum type,
 		                      GLsizeiptr stride, void *offset );
-		void bind( void );
-		void unbind( void );
+		void bind( void ) const;
+		void unbind( void ) const;
 		void destroy( void );
 };

@@ -16,12 +16,12 @@ void VAO::link_attributes( VBO *vbo_ptr, GLuint layout, GLuint num_components,
 	vbo_ptr->unbind();
 }
 
-void VAO::bind( void )
+void VAO::bind( void ) const
 {
 	glBindVertexArray( ID );
 }
 
-void VAO::unbind( void )
+void VAO::unbind( void ) const
 {
 	glBindVertexArray( 0 );
 }
