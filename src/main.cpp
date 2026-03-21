@@ -1,3 +1,5 @@
+#define UNUSED __attribute__((unused))
+
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -10,6 +12,7 @@
 #include "shaders/shader.h"
 
 #include "shapes/triangle.h"
+#include "shapes/square.h"
 
 int main( void )
 {
@@ -32,8 +35,8 @@ int main( void )
 	Shader shader;
 
 	// Mesh
-	Mesh mesh( shape::tri_vert, sizeof( shape::tri_vert ),
-	           shape::tri_ind, sizeof( shape::tri_ind ),
+	Mesh mesh( shape::sqre_vert, sizeof( shape::sqre_vert ),
+	           shape::sqre_ind, sizeof( shape::sqre_ind ),
 	           // position
 	           // colour
 	           {
@@ -60,9 +63,9 @@ int main( void )
 		// smallest: base - amp;
 		// biggest: base + amp;
 		float time = (float) glfwGetTime();
-		// float scale = 1.0f + 0.5f * sinf( time );
+		UNUSED float scale = 1.0f + 0.5f * sinf( time );
 
-		mesh.set_rotation( 0.0f, time * 0.2, -time * 0.5 );
+		mesh.set_rotation( 0.0f, time * 0.5f, 0.0f );
 		// mesh.set_scale_uniform( scale * 0.5 );
 		renderer_draw( &shader, &mesh, GL_TRIANGLES );
 
