@@ -5,8 +5,8 @@
 class EBO {
 	public:
 		GLuint ID;
-		GLsizei count;
-		EBO( const GLuint *indices_ptr, GLsizeiptr size);
+		EBO( void ) = default;
+		EBO( const GLuint *ind_ptr, GLsizeiptr size);
 
 		void bind( void );
 		void unbind( void );
