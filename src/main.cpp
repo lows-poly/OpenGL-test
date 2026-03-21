@@ -6,12 +6,8 @@
 #include "window.h"
 
 #include "renderer.h"
+#include "mesh.h"
 #include "shaders/shader.h"
-#include "shaders/VAO.h"
-#include "shaders/VBO.h"
-#include "shaders/EBO.h"
-
-const float TRIANGLE_SCALE = 1.0f;
 
 GLfloat vertices[] = {
 	// x    y     z        r     g     b
@@ -33,7 +29,7 @@ GLfloat texture_coords[] = {
 int main( void )
 {
 	if ( !glfwInit() ) {
-		std::cout << "GLFW init failed\n";
+		std::cerr << "GLFW init failed\n";
 		return EXIT_FAILURE;
 	}
 
@@ -49,19 +45,10 @@ int main( void )
 	// shader
 	Shader shader;
 
-	VAO vao;
-	vao.bind();
-
-	VBO vbo( vertices, sizeof(vertices) );
-	EBO ebo( indices, sizeof(indices) );
-
-	vao.link_attributes( &vbo, 0, 3, GL_FLOAT, 6 * sizeof(float),
-	                     (void*)0 );
-	vao.link_attributes( &vbo, 1, 3, GL_FLOAT, 6 * sizeof(float),
-	                     (void*)(3 * sizeof(float)) );
-
-	vao.unbind();
-	ebo.unbind();
+	Mesh mesh( vertices, sizeof( vertices ), indices, sizeof( indices ), {
+	           { 0, 3, GL_FLOAT, 0 },                  // position
+	           { 1, 3, GL_FLOAT, 3 * sizeof( float ) } // colour
+	});
 
 	// texture
 	// int img_width, img_height, num_colour_chnls;
@@ -97,13 +84,13 @@ int main( void )
 		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT );
 
-		renderer_draw( &shader, &vao, &ebo, GL_TRIANGLES );
+		renderer_draw( &shader, &mesh, GL_TRIANGLES );
 
 		glfwSwapBuffers( window_ptr ); // update each frame
 		glfwPollEvents();
 	}
 
-	renderer_destroy( &shader, &vao, &vbo, &ebo );
+	renderer_destroy( &shader, &mesh );
 	// glDeleteTextures( 1, &texture );
 	glfwDestroyWindow( window_ptr ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely
