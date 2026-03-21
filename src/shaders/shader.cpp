@@ -13,7 +13,8 @@ static const char *u_names[UNIFORM_COUNT] = {
 	[UNIFORM_COLOUR] = "color",
 	[UNIFORM_MODEL] = "u_model",
 	[UNIFORM_VIEW] = "u_view",
-	[UNIFORM_PROJECTION] = "u_projection"
+	[UNIFORM_PROJECTION] = "u_projection",
+	[UNIFORM_TRANSFORM] = "u_transform"
 };
 
 static string read_file( const char *path_ptr )
@@ -152,7 +153,7 @@ void Shader::compile_errors( unsigned int shader, const string& type )
 		if ( is_compiled != GL_FALSE )
 			return;
 
-		glGetShaderInfoLog( shader, 1024, NULL, info_log );
+		glGetProgramInfoLog( shader, 1024, NULL, info_log );
 		std::cerr << "SHADER_LINKING_ERROR: " << type << "\n";
 		std::cerr << info_log << type << std::endl;
 	}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cglm/cglm.h>
 
 #include "shaders/VAO.h"
 #include "shaders/VBO.h"
@@ -19,12 +20,18 @@ public:
 	VBO vbo;
 	EBO ebo;
 
-	Mesh( float *v_ptr, size_t v_size, unsigned int *ind_ptr, size_t ind_size,
+	vec3 position = { 0.0f, 0.0f, 0.0f };
+	vec3 scale = { 1.0f, 1.0f, 1.0f };
+	float rotation = 0.0f;
+
+	Mesh( const GLfloat *v_ptr, size_t v_size,
+	      const GLuint *ind_ptr, size_t ind_size,
 	      std::vector<Attribute> attributes );
 
+	void get_transform( mat4 out ) const;
+	unsigned int get_ind_counts( void ) const;
 	void bind_vao( void ) const;
 	void unbind_vao( void ) const;
-	unsigned int get_ind_counts( void ) const;
 	void destroy_buffers( void );
 
 private:

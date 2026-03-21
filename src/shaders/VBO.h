@@ -6,7 +6,7 @@ class VBO {
 	public:
 		GLuint ID;
 		VBO( void ) = default;
-		VBO( GLfloat *v_ptr, GLsizeiptr size );
+		VBO( const GLfloat *v_ptr, GLsizeiptr size );
 
 		void bind( void );
 		void unbind( void );
