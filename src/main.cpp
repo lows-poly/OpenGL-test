@@ -18,6 +18,7 @@ int main( void )
 		return EXIT_FAILURE;
 	}
 
+	// Window
 	window_config config;
 	config.width = 800;
 	config.height = 800;
@@ -27,9 +28,10 @@ int main( void )
 	if ( !window_ptr )
 		return EXIT_FAILURE;
 
-	// shader
+	// Shader
 	Shader shader;
 
+	// Mesh
 	Mesh mesh( shape::tri_vert, sizeof( shape::tri_vert ),
 	           shape::tri_ind, sizeof( shape::tri_ind ),
 	           // position
@@ -39,6 +41,11 @@ int main( void )
 	                   { 1, 3, GL_FLOAT, 3 * sizeof( float ) }
 	           }
 	);
+
+	// Culliing
+	glEnable( GL_CULL_FACE );
+	glCullFace( GL_BACK );
+	glFrontFace( GL_CCW );
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
@@ -62,6 +69,7 @@ int main( void )
 		glfwPollEvents();
 	}
 
+	// Clean up
 	renderer_destroy( &shader, &mesh );
 	glfwDestroyWindow( window_ptr ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely
