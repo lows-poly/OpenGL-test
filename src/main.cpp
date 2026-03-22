@@ -92,8 +92,7 @@ int main( void )
 			frames = 0;
 		}
 
-		mesh.set_rotation( 0.0f,
-		                   current_time * 0.5f,
+		mesh.set_rotation( 0.0f, current_time * 0.5f,
 		                   current_time * 0.5f );
 
 		// mesh.set_scale_uniform( scale * 0.5 );
