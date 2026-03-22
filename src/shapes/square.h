@@ -4,11 +4,11 @@
 
 namespace shape {
 	constexpr GLfloat sqre_vert[] = {
-		// x    y     z        r     g     b      texture
-		-0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-		0.5f,  -0.5f, 0.0f,    1.0f, 1.0f, 0.0f,  1.0f, 0.0f,
-		0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f,  1.0f, 1.0f,
-		-0.5f,  0.5f, 0.0f,    0.0f, 1.0f, 1.0f,  0.0f, 1.0f
+		// x    y     z        r     g     b     a        texture
+		-0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f, 1.0f,    0.0f, 0.0f,
+		0.5f,  -0.5f, 0.0f,    1.0f, 1.0f, 0.0f, 1.0f,    1.0f, 0.0f,
+		0.5f,   0.5f, 0.0f,    1.0f, 0.0f, 0.0f, 1.0f,    1.0f, 1.0f,
+		-0.5f,  0.5f, 0.0f,    0.0f, 1.0f, 1.0f, 1.0f,    0.0f, 1.0f
 	};
 
 	constexpr GLuint sqre_ind[] = {

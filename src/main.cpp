@@ -43,8 +43,8 @@ int main( void )
 	           // texture
 	           {
 	                   { 0, 3, GL_FLOAT, 0 },
-	                   { 1, 3, GL_FLOAT, 3 * sizeof( float ) },
-	                   { 2, 2, GL_FLOAT, 6 * sizeof( float ) }
+	                   { 1, 4, GL_FLOAT, 3 * sizeof( float ) },
+	                   { 2, 2, GL_FLOAT, 7 * sizeof( float ) }
 	           }
 	);
 

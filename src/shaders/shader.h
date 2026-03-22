@@ -10,6 +10,12 @@
 typedef std::string string;
 
 typedef enum {
+	FRAGMENT_DEFAULT,
+	FRAGMENT_TEXTURE,
+	FRAGMENT_TEXTURE_COLOUR
+} FragmentType;
+
+typedef enum {
 	UNIFORM_SCALE,
 	UNIFORM_COLOUR,
 	UNIFORM_MODEL,
@@ -17,13 +23,14 @@ typedef enum {
 	UNIFORM_PROJECTION,
 	UNIFORM_TEXTURE,
 	UNIFORM_TRANSFORM,
+	UNIFORM_MODE,
 	UNIFORM_COUNT
 } Uniform;
 
 class Shader {
 public:
 	GLuint ID;
-	Shader( void );
+	Shader( FragmentType type = FRAGMENT_DEFAULT );
 
 	void enable( void );
 	

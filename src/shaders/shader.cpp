@@ -15,6 +15,7 @@ static const char *u_names[UNIFORM_COUNT] = {
 	[UNIFORM_VIEW] = "u_view",
 	[UNIFORM_PROJECTION] = "u_projection",
 	[UNIFORM_TEXTURE] = "u_texture",
+	[UNIFORM_MODE] = "u_mode",
 	[UNIFORM_TRANSFORM] = "u_transform"
 };
 
@@ -38,10 +39,27 @@ static string read_file( const char *path_ptr )
 
 // Constructor
 
-Shader::Shader( void )
+Shader::Shader( FragmentType fragment_type )
 {
-	string vertex_code = read_file( "src/shaders/default.vert.txt" );
-	string fragment_code = read_file( "src/shaders/default.frag.txt" );
+	string vertex_code = read_file( "src/shaders/glsl/default.vert.glsl" );
+	string fragment_code;
+
+	switch (fragment_type) {
+	case FRAGMENT_TEXTURE:
+		fragment_code = read_file( "src/shaders/glsl/texture.frag.glsl" );
+		break;
+	case FRAGMENT_TEXTURE_COLOUR:
+		fragment_code = read_file(
+			"src/shaders/glsl/texture_colour.frag.glsl"
+		);
+		break;
+	case FRAGMENT_DEFAULT:
+		fragment_code = read_file( "src/shaders/glsl/default.frag.glsl" );
+		break;
+	default:
+		std::cerr << "UNKNOWN FRAGMENT SHADER TYPE\n";
+		break;
+	}
 
 	const char *v_src_ptr = vertex_code.c_str();
 	const char *f_src_ptr = fragment_code.c_str();
