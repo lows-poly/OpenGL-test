@@ -56,7 +56,7 @@ int main( void )
 	);
 
 	// Texture
-	Texture texture( "assets/wall.jpg" );
+	Texture texture( "assets/textures/err-texture.jpeg" );
 
 	// Culliing
 	glEnable( GL_CULL_FACE );
