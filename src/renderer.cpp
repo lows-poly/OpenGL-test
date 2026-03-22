@@ -3,13 +3,19 @@
 #include "renderer.h"
 #include "mesh.h"
 #include "shaders/shader.h"
+#include "shaders/texture.h"
 
-void renderer_draw( Shader *shader_ptr, Mesh *mesh_ptr, GLenum mode )
+void renderer_draw( Shader *shader_ptr, Mesh *mesh_ptr, Texture *texture_ptr,
+                    GLenum mode )
 {
 	mat4 transform;
 	mesh_ptr->get_transform( transform );
 
 	shader_ptr->enable();
+
+	shader_ptr->set_int( UNIFORM_TEXTURE, 0 );
+	texture_ptr->bind();
+	
 	shader_ptr->set_mat4( UNIFORM_TRANSFORM, (float *)transform );
 	mesh_ptr->bind_vao();
 

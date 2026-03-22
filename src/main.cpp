@@ -10,6 +10,7 @@
 #include "renderer.h"
 #include "mesh.h"
 #include "shaders/shader.h"
+#include "shaders/texture.h"
 
 #include "shapes/triangle.h"
 #include "shapes/square.h"
@@ -39,11 +40,16 @@ int main( void )
 	           shape::sqre_ind, sizeof( shape::sqre_ind ),
 	           // position
 	           // colour
+	           // texture
 	           {
 	                   { 0, 3, GL_FLOAT, 0 },
-	                   { 1, 3, GL_FLOAT, 3 * sizeof( float ) }
+	                   { 1, 3, GL_FLOAT, 3 * sizeof( float ) },
+	                   { 2, 2, GL_FLOAT, 6 * sizeof( float ) }
 	           }
 	);
+
+	// Texture
+	Texture texture( "assets/wall.jpg" );
 
 	// Culliing
 	// glEnable( GL_CULL_FACE );
@@ -62,18 +68,20 @@ int main( void )
 		// base + amp * sin( time )
 		// smallest: base - amp;
 		// biggest: base + amp;
-		float time = (float) glfwGetTime();
-		UNUSED float scale = 1.0f + 0.5f * sinf( time );
+		// float time = (float) glfwGetTime();
+		// float scale = 1.0f + 0.5f * sinf( time );
 
-		mesh.set_rotation( 0.0f, time * 0.5f, 0.0f );
+		// mesh.set_rotation( 0.0f, time * 0.5f, 0.0f );
 		// mesh.set_scale_uniform( scale * 0.5 );
-		renderer_draw( &shader, &mesh, GL_TRIANGLES );
+		
+		renderer_draw( &shader, &mesh, &texture, GL_TRIANGLES );
 
 		glfwSwapBuffers( window_ptr ); // update each frame
 		glfwPollEvents();
 	}
 
 	// Clean up
+	texture.destroy();
 	renderer_destroy( &shader, &mesh );
 	glfwDestroyWindow( window_ptr ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely

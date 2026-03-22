@@ -15,6 +15,7 @@ typedef enum {
 	UNIFORM_MODEL,
 	UNIFORM_VIEW,
 	UNIFORM_PROJECTION,
+	UNIFORM_TEXTURE,
 	UNIFORM_TRANSFORM,
 	UNIFORM_COUNT
 } Uniform;
@@ -28,6 +29,7 @@ public:
 	
 	void bind( void );
 	void cache_uniforms( void );
+	void set_int( Uniform type, int value );
 	void set_float( Uniform uniform, float value );
 	void set_vec3( Uniform uniform, float x, float y, float z );
 	void set_mat4( Uniform uniform, const float *mat_ptr );

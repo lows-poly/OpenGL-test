@@ -14,6 +14,7 @@ static const char *u_names[UNIFORM_COUNT] = {
 	[UNIFORM_MODEL] = "u_model",
 	[UNIFORM_VIEW] = "u_view",
 	[UNIFORM_PROJECTION] = "u_projection",
+	[UNIFORM_TEXTURE] = "u_texture",
 	[UNIFORM_TRANSFORM] = "u_transform"
 };
 
@@ -76,10 +77,16 @@ void Shader::enable( void )
 	glUseProgram( this->ID );
 }
 
+void Shader::set_int( Uniform type, int value )
+{
+	GLint loc = this->uniforms[type];
+	if ( loc != -1 )
+		glUniform1i( loc, value );
+}
+
 void Shader::set_float( Uniform type, float value )
 {
 	GLint loc = this->uniforms[type];
-
 	if ( loc != -1 )
 		glUniform1f( loc, value );
 }
