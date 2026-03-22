@@ -2,21 +2,25 @@
 
 #include "renderer.h"
 #include "mesh.h"
+#include "camera.h"
 #include "shaders/shader.h"
-#include "shaders/texture.h"
 
-void renderer_draw( Shader *shader_ptr, Mesh *mesh_ptr, Texture *texture_ptr,
-                    GLenum mode )
+void renderer_draw( Shader *shader_ptr, Mesh *mesh_ptr, Camera *cam_ptr,
+                    Texture *tex_ptr, GLenum mode )
 {
-	mat4 transform;
-	mesh_ptr->get_transform( transform );
+	mat4 model, view, projection;
+	mesh_ptr->get_transform( model );
+	cam_ptr->get_view( view );
+	cam_ptr->get_projection( projection );
 
 	shader_ptr->enable();
+	shader_ptr->set_mat4( UNIFORM_MODEL, (float *)model );
+	shader_ptr->set_mat4( UNIFORM_VIEW, (float *)view );
+	shader_ptr->set_mat4( UNIFORM_PROJECTION, (float *)projection );
 
 	shader_ptr->set_int( UNIFORM_TEXTURE, 0 );
-	texture_ptr->bind();
+	tex_ptr->bind();
 	
-	shader_ptr->set_mat4( UNIFORM_TRANSFORM, (float *)transform );
 	mesh_ptr->bind_vao();
 
 	// draw mode, count, type, indices
@@ -24,8 +28,9 @@ void renderer_draw( Shader *shader_ptr, Mesh *mesh_ptr, Texture *texture_ptr,
 	mesh_ptr->unbind_vao();
 }
 
-void renderer_destroy( Shader *shader_ptr, Mesh *mesh_ptr )
+void renderer_destroy( Shader *shader_ptr, Mesh *mesh_ptr, Texture *tex_ptr )
 {
 	mesh_ptr->destroy_buffers();
 	shader_ptr->destroy();
+	tex_ptr->destroy();
 }

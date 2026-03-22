@@ -20,7 +20,7 @@ GLFWwindow* create_window( const window_config &config )
 	}
 
 	glfwMakeContextCurrent( window_ptr );
-	glfwSwapInterval(1);
+	glfwSwapInterval( 0 );
 
 	if ( !gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) ) {
 		std::cerr << "Failed to initialise GLAD\n";
