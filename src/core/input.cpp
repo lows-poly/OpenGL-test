@@ -19,7 +19,7 @@ static void mouse_button_callback( GLFWwindow *window_ptr, int button,
 {
 	(void)window_ptr;
 	(void)mods;
-	if ( button != GLFW_MOUSE_BUTTON_LEFT )
+	if ( button != GLFW_MOUSE_BUTTON_RIGHT )
 		return;
 
 	if ( action == GLFW_PRESS ) {
