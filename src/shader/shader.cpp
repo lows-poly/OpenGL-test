@@ -41,20 +41,20 @@ static string read_file( const char *path_ptr )
 
 Shader::Shader( FragmentType fragment_type )
 {
-	string vertex_code = read_file( "src/shaders/glsl/default.vert.glsl" );
+	string vertex_code = read_file( "src/shader/glsl/default.vert.glsl" );
 	string fragment_code;
 
 	switch (fragment_type) {
 	case FRAGMENT_TEXTURE:
-		fragment_code = read_file( "src/shaders/glsl/texture.frag.glsl" );
+		fragment_code = read_file( "src/shader/glsl/texture.frag.glsl" );
 		break;
 	case FRAGMENT_TEXTURE_COLOUR:
 		fragment_code = read_file(
-			"src/shaders/glsl/texture_colour.frag.glsl"
+			"src/shader/glsl/texture_colour.frag.glsl"
 		);
 		break;
 	case FRAGMENT_DEFAULT:
-		fragment_code = read_file( "src/shaders/glsl/default.frag.glsl" );
+		fragment_code = read_file( "src/shader/glsl/default.frag.glsl" );
 		break;
 	default:
 		std::cerr << "UNKNOWN FRAGMENT SHADER TYPE\n";

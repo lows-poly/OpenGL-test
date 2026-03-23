@@ -5,17 +5,18 @@
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
 
-#include "window.h"
+#include "core/window.h"
+#include "core/renderer.h"
 
-#include "renderer.h"
-#include "camera.h"
-#include "mesh.h"
-#include "shaders/shader.h"
-#include "shaders/texture.h"
+#include "scene/camera.h"
+#include "scene/mesh.h"
 
-#include "shapes/triangle.h"
-#include "shapes/square.h"
-#include "shapes/cube.h"
+#include "shader/shader.h"
+#include "shader/texture.h"
+
+#include "scene/shapes/triangle.h"
+#include "scene/shapes/square.h"
+#include "scene/shapes/cube.h"
 
 int main( void )
 {
@@ -36,29 +37,18 @@ int main( void )
 
 	// Camera
 	Camera camera;
-
 	glEnable( GL_DEPTH_TEST );
+	
+	// Object
+	shape_data object = shape::cube();
 
 	// Shader
-	Shader shader( FRAGMENT_TEXTURE );
+	Shader shader( object.fragment_type );
 
 	// Mesh
-	Mesh mesh( shape::cube_vert, sizeof( shape::cube_vert ),
-	           shape::cube_ind, sizeof( shape::cube_ind ),
-	           // position
-	           // colour
-	           // texture
-	           {
-	                   { 0, 3, GL_FLOAT, 0 },
-	                   { 1, 4, GL_FLOAT, 3 * sizeof( float ) },
-	                   { 2, 2, GL_FLOAT, 7 * sizeof( float ) }
-	           }
-	);
+	Mesh mesh( object );
 
-	// Texture
-	Texture texture( "assets/textures/err-texture.jpeg" );
-
-	// Culliing
+	// Culling
 	glEnable( GL_CULL_FACE );
 	glCullFace( GL_BACK );
 	glFrontFace( GL_CCW );
@@ -92,19 +82,19 @@ int main( void )
 			frames = 0;
 		}
 
-		mesh.set_rotation( 0.0f, current_time * 0.5f,
+		mesh.set_rotation( current_time * 0.5f, current_time * 0.5f,
 		                   current_time * 0.5f );
 
 		// mesh.set_scale_uniform( scale * 0.5 );
 		
-		renderer_draw( &shader, &mesh, &camera, &texture, GL_TRIANGLES );
+		renderer_draw( &shader, &mesh, &camera, GL_TRIANGLES );
 
 		glfwSwapBuffers( window_ptr ); // update each frame
 		glfwPollEvents();
 	}
 
 	// Clean up
-	renderer_destroy( &shader, &mesh, &texture );
+	renderer_destroy( &shader, &mesh );
 	glfwDestroyWindow( window_ptr ); // delete window before ending the program
 	glfwTerminate(); // terminate glfw entirely
 	return EXIT_SUCCESS;

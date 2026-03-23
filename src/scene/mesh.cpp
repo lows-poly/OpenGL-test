@@ -2,14 +2,24 @@
 
 // Constructor
 
+Mesh::Mesh( const shape_data &shape )
+    : Mesh( shape.v_ptr, shape.v_size,
+            shape.ind_ptr, shape.ind_size,
+            shape.attributes, shape.texture_path )
+{}
+
 Mesh::Mesh( const GLfloat *v_ptr, size_t v_size,
             const GLuint *ind_ptr, size_t ind_size,
-            std::vector<Attribute> attributes )
+            std::vector<Attribute> attributes,
+            const char *texture_path )
 {
 	this->ind_counts = ind_size / sizeof( GLuint );
 	this->vbo = VBO( v_ptr, v_size );
 	this->ebo = EBO( ind_ptr, ind_size );
 	this->stride = 0;
+
+	if ( texture_path )
+		this->texture = Texture( texture_path );
 	
 	for ( auto &attr : attributes ) {
 		this->stride += attr.components * sizeof( GLfloat );
@@ -19,6 +29,26 @@ Mesh::Mesh( const GLfloat *v_ptr, size_t v_size,
 }
 
 // PUBLIC METHODS
+
+void Mesh::draw( Shader *shader_ptr, mat4 view, mat4 proj, GLenum mode )
+{
+	mat4 model;
+	this->get_transform( model );
+
+	shader_ptr->enable();
+	shader_ptr->set_mat4( UNIFORM_MODEL, (float *)model );
+	shader_ptr->set_mat4( UNIFORM_VIEW, (float *)view );
+	shader_ptr->set_mat4( UNIFORM_PROJECTION, (float *)proj );
+
+	if ( this->texture.has_value() ) {
+		shader_ptr->set_int( UNIFORM_TEXTURE, 0 );
+		this->texture->bind();
+	}
+	
+	this->vao.bind();
+	glDrawElements( mode, this->ind_counts, GL_UNSIGNED_INT, 0 );
+	this->vao.unbind();
+}
 
 void Mesh::get_transform( mat4 out ) const
 {
@@ -58,26 +88,14 @@ void Mesh::set_scale_uniform( float u_scale )
 	glm_vec3_fill( this->scale, u_scale ); 
 }
 
-void Mesh::bind_vao( void ) const
-{
-	this->vao.bind();
-}
-
-void Mesh::unbind_vao( void ) const
-{
-	this->vao.unbind();
-}
-
-unsigned int Mesh::get_ind_counts( void ) const
-{
-	return this->ind_counts;
-}
-
 void Mesh::destroy_buffers( void )
 {
 	this->vao.destroy();
 	this->vbo.destroy();
 	this->ebo.destroy();
+
+	if ( this->texture.has_value() )
+		this->texture->destroy();
 }
 
 // PRIVATE METHODS
