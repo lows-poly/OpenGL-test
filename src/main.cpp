@@ -6,6 +6,7 @@
 #include <stb/stb_image.h>
 
 #include "core/window.h"
+#include "core/input.h"
 #include "core/renderer.h"
 
 #include "scene/camera.h"
@@ -58,10 +59,17 @@ int main( void )
 	float delta_time = 0.0f;
 	int frames = 0;
 
+	// Mouse state
+	mouse_state mouse;
+	input_init( window_ptr, &mouse );
+	float rot_x = 0.0f;
+	float rot_y = 0.0f;
+
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
 		// input
-		window_input_process( window_ptr );
+		input_process( window_ptr );
+		input_update_rotation( &mouse, &rot_x, &rot_y );
 
 		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
@@ -82,8 +90,7 @@ int main( void )
 			frames = 0;
 		}
 
-		mesh.set_rotation( current_time * 0.5f, current_time * 0.5f,
-		                   current_time * 0.5f );
+		mesh.set_rotation( rot_x, rot_y, 0.0f );
 
 		// mesh.set_scale_uniform( scale * 0.5 );
 		

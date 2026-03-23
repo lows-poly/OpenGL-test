@@ -35,12 +35,6 @@ GLFWwindow* create_window( const window_config &config )
 	return window_ptr;
 }
 
-void window_input_process( GLFWwindow *window_ptr )
-{
-	if ( glfwGetKey( window_ptr, GLFW_KEY_ESCAPE ) == GLFW_PRESS )
-		glfwSetWindowShouldClose( window_ptr, true );
-}
-
 void framebuffer_size_callback( UNUSED GLFWwindow *window_ptr, int width, int height )
 {
 	glViewport( 0, 0, width, height );

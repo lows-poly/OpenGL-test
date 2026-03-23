@@ -11,4 +11,3 @@ struct window_config {
 
 GLFWwindow* create_window( const window_config &config );
 void framebuffer_size_callback( GLFWwindow *window_ptr, int width, int height );
-void window_input_process( GLFWwindow *window_ptr );
