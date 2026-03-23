@@ -90,7 +90,7 @@ int main( void )
 			frames = 0;
 		}
 
-		mesh.set_rotation( rot_x, rot_y, 0.0f );
+		mesh.set_rotation( rot_x * 0.5f, rot_y * 0.5f, 0.0f );
 
 		// mesh.set_scale_uniform( scale * 0.5 );
 		

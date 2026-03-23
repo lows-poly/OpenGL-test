@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "input.h"
 
 static mouse_state *g_mouse = nullptr;
@@ -51,8 +52,13 @@ void input_update_rotation( mouse_state *mouse_ptr, float *rot_x, float *rot_y )
 	if ( !mouse_ptr->is_pressed )
 		return;
 
-	*rot_x += mouse_ptr->delta_y * mouse_ptr->sensitivity;
-	*rot_y += mouse_ptr->delta_x * mouse_ptr->sensitivity;
+	const float max_delta = 50.0f;
+
+	float dx = std::clamp( mouse_ptr->delta_x, -max_delta, max_delta );
+	float dy = std::clamp( mouse_ptr->delta_y, -max_delta, max_delta );
+
+	*rot_x += dy * mouse_ptr->sensitivity;
+	*rot_y += dx * mouse_ptr->sensitivity;
 
 	// consume delta after applying
 	mouse_ptr->delta_x = 0.0f;
