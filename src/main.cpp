@@ -53,13 +53,13 @@ int main( void )
 	// Mesh
 	Mesh mesh( object );
 	mesh.set_position( 0.0f, 0.0f, -5.0f );
-	mesh.set_scale( 7.0f, 0.1f, 7.0f );
+	mesh.set_scale( 1.0f, 1.0f, 1.0f );
 
 	vec3 mesh_pos;
 	mesh.get_position( mesh_pos );
 
 	Mesh light_cube_mesh( light_cube );
-	light_cube_mesh.set_position( mesh_pos[0], mesh_pos[1] + 1, mesh_pos[2] );
+	light_cube_mesh.set_position( mesh_pos[0] + 1.5f, mesh_pos[1] + 1.2f, mesh_pos[2] + 1 );
 	light_cube_mesh.set_scale_uniform( 0.1f );
 	
 	vec3 light_pos;

@@ -135,7 +135,7 @@ constexpr GLuint cube_ind[] = {
 };
 
 static constexpr int CUBE_VERTEX_COUNT = sizeof( cube_vert ) / sizeof( GLfloat ) / 3;
-static constexpr const char *TEXTURE = "assets/textures/PLANKS.png";
+static constexpr const char *TEXTURE = "assets/textures/CONCRETE-1.png";
 static constexpr const char *TEXTURE_SPEC = "assets/textures/PLANKS-SPEC.png";
 
 inline shape_data cube( void )
@@ -150,7 +150,7 @@ inline shape_data cube( void )
 	return {
 		verts.data(),
 		cube_ind,
-		nullptr,
+		TEXTURE,
 		nullptr,
 		verts.size() * sizeof( GLfloat ),
 		sizeof( cube_ind ),
@@ -160,7 +160,7 @@ inline shape_data cube( void )
 			{ 1, 3, GL_FLOAT, 3 * sizeof( float ) },  // normals
 			{ 2, 2, GL_FLOAT, 6 * sizeof( float ) },  // texture
 		},
-		FragmentType::FRAGMENT_SOLID_DIFFUSE,
+		FragmentType::FRAGMENT_DIFFUSE,
 	};
 }
 
