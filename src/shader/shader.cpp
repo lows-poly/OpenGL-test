@@ -10,12 +10,16 @@ typedef std::string string;
 
 static const char *u_names[UNIFORM_COUNT] = {
 	[UNIFORM_SCALE] = "scale",
-	[UNIFORM_COLOUR] = "color",
+	[UNIFORM_COLOUR] = "u_colour",
 	[UNIFORM_LIGHT] = "u_light_colour",
+	[UNIFORM_LIGHT_POS] = "u_light_pos",
+	[UNIFORM_AMBIENT] = "u_ambient",
+	[UNIFORM_VIEW_POS] = "u_view_pos",
 	[UNIFORM_MODEL] = "u_model",
 	[UNIFORM_VIEW] = "u_view",
 	[UNIFORM_PROJECTION] = "u_projection",
 	[UNIFORM_TEXTURE] = "u_texture",
+	[UNIFORM_TEXTURE_SPECULAR] = "u_texture_specular",
 	[UNIFORM_MODE] = "u_mode",
 	[UNIFORM_TRANSFORM] = "u_transform"
 };
@@ -42,10 +46,18 @@ static string read_file( const char *path_ptr )
 
 Shader::Shader( FragmentType fragment_type )
 {
-	string vertex_code = read_file( "src/shader/glsl/default.vert.glsl" );
+	string vertex_code = read_file( "src/shader/glsl/diffuse.vert.glsl" );
 	string fragment_code;
 
 	switch (fragment_type) {
+	case FRAGMENT_SOLID_DIFFUSE:
+		vertex_code = read_file( "src/shader/glsl/diffuse.vert.glsl" );
+		fragment_code = read_file( "src/shader/glsl/solid_diffuse.frag.glsl" );
+		break;
+	case FRAGMENT_DIFFUSE:
+		vertex_code = read_file( "src/shader/glsl/diffuse.vert.glsl" );
+		fragment_code = read_file( "src/shader/glsl/diffuse.frag.glsl" );
+		break;
 	case FRAGMENT_TEXTURE:
 		fragment_code = read_file( "src/shader/glsl/texture.frag.glsl" );
 		break;

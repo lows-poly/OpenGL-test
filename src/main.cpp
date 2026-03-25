@@ -47,14 +47,23 @@ int main( void )
 
 	// Shader
 	Shader shader( object.fragment_type );
+
 	Shader light_shader( light_cube.fragment_type );
 
 	// Mesh
 	Mesh mesh( object );
-	Mesh light_cube_mesh( light_cube );
+	mesh.set_position( 0.0f, 0.0f, -5.0f );
+	mesh.set_scale( 7.0f, 0.1f, 7.0f );
 
-	light_cube_mesh.set_position( 1.5f, 0.0f, 0.5f );
-	light_cube_mesh.set_scale_uniform( 0.5f );
+	vec3 mesh_pos;
+	mesh.get_position( mesh_pos );
+
+	Mesh light_cube_mesh( light_cube );
+	light_cube_mesh.set_position( mesh_pos[0], mesh_pos[1] + 1, mesh_pos[2] );
+	light_cube_mesh.set_scale_uniform( 0.1f );
+	
+	vec3 light_pos;
+	light_cube_mesh.get_position( light_pos );
 
 	// Culling
 	glEnable( GL_CULL_FACE );
@@ -82,7 +91,7 @@ int main( void )
 		input_process( window_ptr );
 		camera.update( window_ptr, delta_time, &mouse, &scroll );
 
-		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+		glClearColor( 0.0f, 0.0f, 0.0f, 1.7f );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		if ( fmod( current_time, 1.0f ) < delta_time ) {
@@ -91,9 +100,17 @@ int main( void )
 		}
 
 		renderer_draw( &shader, &mesh, &camera );
+		shader.set_vec4( UNIFORM_COLOUR, 1.0f, 1.0f, 1.0f, 1.0f );
+
+		shader.set_vec3( UNIFORM_VIEW_POS, camera.position[0],
+		                 camera.position[1], camera.position[2] );
+
+		shader.set_vec3( UNIFORM_LIGHT_POS, light_pos[0], light_pos[1],
+		                 light_pos[2] );
+
 		renderer_draw( &light_shader, &light_cube_mesh, &camera );
 
-		glfwSwapBuffers( window_ptr ); // update each frame
+		glfwSwapBuffers( window_ptr );
 		glfwPollEvents();
 	}
 

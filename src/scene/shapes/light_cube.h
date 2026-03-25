@@ -62,13 +62,16 @@ inline shape_data light_cube( void )
 	});
 
 	return {
-		verts.data(), verts.size() * sizeof( GLfloat ),
-		light_cube_ind, sizeof( light_cube_ind ),
+		verts.data(),
+		light_cube_ind,
+		nullptr,
+		nullptr,
+		verts.size() * sizeof( GLfloat ),
+		sizeof( light_cube_ind ),
 		{
 			{ 0, 3, GL_FLOAT, 0                   },  // position
 		},
 		FragmentType::FRAGMENT_LIGHT,
-		nullptr
 	};
 }
 

@@ -1,17 +1,19 @@
 #include "mesh.h"
+#include <iostream>
 
 // Constructor
 
 Mesh::Mesh( const shape_data &shape )
     : Mesh( shape.v_ptr, shape.v_size,
             shape.ind_ptr, shape.ind_size,
-            shape.attributes, shape.texture_path )
+            shape.attributes, shape.texture_path,
+            shape.texture_spec_path )
 {}
 
 Mesh::Mesh( const GLfloat *v_ptr, size_t v_size,
             const GLuint *ind_ptr, size_t ind_size,
             std::vector<Attribute> attributes,
-            const char *texture_path )
+            const char *texture_path, const char *texture_spec_path )
 {
 	this->ind_counts = ind_size / sizeof( GLuint );
 	this->vbo = VBO( v_ptr, v_size );
@@ -20,6 +22,9 @@ Mesh::Mesh( const GLfloat *v_ptr, size_t v_size,
 
 	if ( texture_path )
 		this->texture = Texture( texture_path );
+
+	if ( texture_spec_path )
+		this->texture_spec = Texture( texture_spec_path );
 	
 	for ( auto &attr : attributes ) {
 		this->stride += attr.components * sizeof( GLfloat );
@@ -39,11 +44,17 @@ void Mesh::draw( Shader *shader_ptr, mat4 view, mat4 proj, GLenum mode )
 	shader_ptr->set_mat4( UNIFORM_MODEL, (float *)model );
 	shader_ptr->set_mat4( UNIFORM_VIEW, (float *)view );
 	shader_ptr->set_mat4( UNIFORM_PROJECTION, (float *)proj );
+
 	shader_ptr->set_vec4( UNIFORM_LIGHT, 1.0f, 1.0f, 1.0f, 1.0f );
+	shader_ptr->set_float( UNIFORM_AMBIENT, 0.1f );
 
 	if ( this->texture.has_value() ) {
+		this->texture->bind( 0 );
 		shader_ptr->set_int( UNIFORM_TEXTURE, 0 );
-		this->texture->bind();
+	}
+	if ( this->texture_spec.has_value() ) {
+		this->texture_spec->bind( 1 );
+		shader_ptr->set_int( UNIFORM_TEXTURE_SPECULAR, 1 );
 	}
 	
 	this->vao.bind();
@@ -61,6 +72,11 @@ void Mesh::get_transform( mat4 out ) const
 	glm_rotate( out, rotation[2], (vec3){ 0.0f, 0.0f, 1.0f } );
 
 	glm_scale( out, (float *)scale );
+}
+
+void Mesh::get_position( vec3 out ) const
+{
+	glm_vec3_copy( (float*)this->position, out );
 }
 
 void Mesh::set_position( float x, float y, float z )
@@ -97,6 +113,9 @@ void Mesh::destroy_buffers( void )
 
 	if ( this->texture.has_value() )
 		this->texture->destroy();
+
+	if ( this->texture_spec.has_value() )
+		this->texture_spec->destroy();
 }
 
 // PRIVATE METHODS

@@ -6,13 +6,11 @@
 Texture::Texture( const char *path_ptr )
 {
 	stbi_set_flip_vertically_on_load( true );
-
 	int width, height, num_channels;
 	unsigned char *data_ptr = stbi_load( path_ptr, &width, &height,
 	                                     &num_channels, 0 );
 
 	glGenTextures( 1, &this->ID );
-	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D, this->ID );
 
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
@@ -22,6 +20,8 @@ Texture::Texture( const char *path_ptr )
 
 	if ( !data_ptr ) {
 		std::cerr << "FAILED TO LOAD TEXTURE: " << path_ptr << "\n";
+		std::cerr << "Trying to load: " << path_ptr << "\n";
+		std::cerr << "STB reason: " << stbi_failure_reason() << "\n";
 		return;
 	}
 
@@ -38,9 +38,9 @@ Texture::Texture( const char *path_ptr )
 	glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-void Texture::bind( void ) const
+void Texture::bind( GLuint slot ) const
 {
-	glActiveTexture( GL_TEXTURE0 );
+	glActiveTexture( GL_TEXTURE0 + slot );
 	glBindTexture( GL_TEXTURE_2D, this->ID );
 }
 
