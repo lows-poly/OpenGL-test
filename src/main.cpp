@@ -51,7 +51,7 @@ int main( void )
 
 	// Culling
 	glEnable( GL_CULL_FACE );
-	glCullFace( GL_BACK );
+	glCullFace( GL_FRONT );
 	glFrontFace( GL_CCW );
 
 	// Time
@@ -61,39 +61,28 @@ int main( void )
 
 	// Mouse state
 	mouse_state mouse;
-	input_init( window_ptr, &mouse );
-	float rot_x = 0.0f;
-	float rot_y = 0.0f;
+	scroll_state scroll;
+	input_init( window_ptr, &mouse, &scroll );
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
-		// input
-		input_process( window_ptr );
-		input_update_rotation( &mouse, &rot_x, &rot_y );
-
-		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
 		float current_time = (float) glfwGetTime();
 		delta_time = current_time - last_time;
 		last_time = current_time;
 		frames++;
 
-		// scale oscillation
-		// base + amp * sin( time )
-		// smallest: base - amp;
-		// biggest: base + amp;
-		// float scale = 1.0f + 0.5f * sinf( time );
+		// input
+		input_process( window_ptr );
+		camera.update( window_ptr, delta_time, &mouse, &scroll );
+
+		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		if ( fmod( current_time, 1.0f ) < delta_time ) {
 			std::cout << "FPS: " << frames << "\n";
 			frames = 0;
 		}
 
-		mesh.set_rotation( rot_x * 0.5f, rot_y * 0.5f, 0.0f );
-
-		// mesh.set_scale_uniform( scale * 0.5 );
-		
 		renderer_draw( &shader, &mesh, &camera, GL_TRIANGLES );
 
 		glfwSwapBuffers( window_ptr ); // update each frame

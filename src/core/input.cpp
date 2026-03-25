@@ -2,10 +2,12 @@
 #include "input.h"
 
 static mouse_state *g_mouse = nullptr;
+static scroll_state *g_scroll = nullptr;
 
 static void cursor_callback( GLFWwindow *window_ptr, double x, double y )
 {
 	(void)window_ptr;
+
 	if ( !g_mouse || !g_mouse->is_pressed )
 		return;
 
@@ -20,6 +22,7 @@ static void mouse_button_callback( GLFWwindow *window_ptr, int button,
 {
 	(void)window_ptr;
 	(void)mods;
+
 	if ( button != GLFW_MOUSE_BUTTON_RIGHT )
 		return;
 
@@ -34,11 +37,25 @@ static void mouse_button_callback( GLFWwindow *window_ptr, int button,
 	}
 }
 
-void input_init( GLFWwindow *window_ptr, mouse_state *mouse_ptr )
+static void scroll_callback( GLFWwindow *window_ptr, double x_offset, double y_offset )
+{
+	(void)window_ptr;
+	(void)x_offset;
+
+	if ( g_scroll )
+		g_scroll->delta += (float)y_offset;
+}
+
+// FUNCTIONS
+
+void input_init( GLFWwindow *window_ptr, mouse_state *mouse_ptr,
+                 scroll_state *scroll_ptr )
 {
 	g_mouse = mouse_ptr;
+	g_scroll = scroll_ptr;
 	glfwSetCursorPosCallback( window_ptr, cursor_callback );
 	glfwSetMouseButtonCallback( window_ptr, mouse_button_callback );
+	glfwSetScrollCallback( window_ptr, scroll_callback );
 }
 
 void input_process( GLFWwindow *window_ptr )
@@ -52,15 +69,30 @@ void input_update_rotation( mouse_state *mouse_ptr, float *rot_x, float *rot_y )
 	if ( !mouse_ptr->is_pressed )
 		return;
 
-	const float max_delta = 50.0f;
+	float dx = std::clamp( mouse_ptr->delta_x, -MAX_DELTA, MAX_DELTA );
+	float dy = std::clamp( mouse_ptr->delta_y, -MAX_DELTA, MAX_DELTA );
 
-	float dx = std::clamp( mouse_ptr->delta_x, -max_delta, max_delta );
-	float dy = std::clamp( mouse_ptr->delta_y, -max_delta, max_delta );
-
-	*rot_x += dy * mouse_ptr->sensitivity;
+	*rot_x -= dy * mouse_ptr->sensitivity;
 	*rot_y += dx * mouse_ptr->sensitivity;
 
-	// consume delta after applying
 	mouse_ptr->delta_x = 0.0f;
 	mouse_ptr->delta_y = 0.0f;
+}
+
+void input_get_move( GLFWwindow *window_ptr, float *fwrd_out, float *right_out )
+{
+	*fwrd_out = 0.0f;
+	*right_out = 0.0f;
+
+	if ( glfwGetKey( window_ptr, GLFW_KEY_W ) == GLFW_PRESS )
+		*fwrd_out += 1.0f;
+
+	if ( glfwGetKey( window_ptr, GLFW_KEY_S ) == GLFW_PRESS )
+		*fwrd_out -= 1.0f;
+
+	if ( glfwGetKey( window_ptr, GLFW_KEY_D ) == GLFW_PRESS )
+		*right_out += 1.0f;
+
+	if ( glfwGetKey( window_ptr, GLFW_KEY_A ) == GLFW_PRESS )
+		*right_out -= 1.0f;
 }
