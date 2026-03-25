@@ -102,7 +102,7 @@ constexpr GLuint cube_ind[] = {
 };
 
 static constexpr int CUBE_VERTEX_COUNT = sizeof( cube_vert ) / sizeof( GLfloat ) / 3;
-static constexpr const char *TEXTURE = "assets/textures/err-texture.jpeg";
+static constexpr const char *TEXTURE = "assets/textures/CONCRETE-1.png";
 
 inline shape_data cube( void )
 {
@@ -120,7 +120,7 @@ inline shape_data cube( void )
 			{ 1, 4, GL_FLOAT, 3 * sizeof( float ) },  // colour
 			{ 2, 2, GL_FLOAT, 7 * sizeof( float ) },  // texture
 		},
-		FragmentType::FRAGMENT_DEFAULT,
+		FragmentType::FRAGMENT_TEXTURE,
 		TEXTURE
 	};
 }

@@ -8,6 +8,6 @@
 #include "shader/buffers/EBO.h"
 
 void renderer_draw( Shader *shader_ptr, Mesh *mesh_ptr, Camera *cam_ptr,
-                    GLenum mode );
+                    GLenum mode = GL_TRIANGLES );
 
 void renderer_destroy( Shader *shader_ptr, Mesh *mesh_ptr );

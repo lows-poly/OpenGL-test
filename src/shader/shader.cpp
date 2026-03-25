@@ -11,6 +11,7 @@ typedef std::string string;
 static const char *u_names[UNIFORM_COUNT] = {
 	[UNIFORM_SCALE] = "scale",
 	[UNIFORM_COLOUR] = "color",
+	[UNIFORM_LIGHT] = "u_light_colour",
 	[UNIFORM_MODEL] = "u_model",
 	[UNIFORM_VIEW] = "u_view",
 	[UNIFORM_PROJECTION] = "u_projection",
@@ -52,6 +53,9 @@ Shader::Shader( FragmentType fragment_type )
 		fragment_code = read_file(
 			"src/shader/glsl/texture_colour.frag.glsl"
 		);
+		break;
+	case FRAGMENT_LIGHT:
+		fragment_code = read_file( "src/shader/glsl/light.frag.glsl" );
 		break;
 	case FRAGMENT_DEFAULT:
 		fragment_code = read_file( "src/shader/glsl/default.frag.glsl" );
@@ -114,6 +118,13 @@ void Shader::set_vec3(Uniform type, float x, float y, float z)
 	GLint loc = uniforms[type];
 	if ( loc != -1 )
 		glUniform3f( loc, x, y, z );
+}
+
+void Shader::set_vec4(Uniform type, float x, float y, float z, float a )
+{
+	GLint loc = uniforms[type];
+	if ( loc != -1 )
+		glUniform4f( loc, x, y, z, a );
 }
 
 void Shader::set_mat4(Uniform type, const float *mat)

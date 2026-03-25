@@ -39,6 +39,7 @@ void Mesh::draw( Shader *shader_ptr, mat4 view, mat4 proj, GLenum mode )
 	shader_ptr->set_mat4( UNIFORM_MODEL, (float *)model );
 	shader_ptr->set_mat4( UNIFORM_VIEW, (float *)view );
 	shader_ptr->set_mat4( UNIFORM_PROJECTION, (float *)proj );
+	shader_ptr->set_vec4( UNIFORM_LIGHT, 1.0f, 1.0f, 1.0f, 1.0f );
 
 	if ( this->texture.has_value() ) {
 		shader_ptr->set_int( UNIFORM_TEXTURE, 0 );

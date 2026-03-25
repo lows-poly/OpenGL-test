@@ -12,12 +12,14 @@ typedef std::string string;
 typedef enum {
 	FRAGMENT_DEFAULT,
 	FRAGMENT_TEXTURE,
+	FRAGMENT_LIGHT,
 	FRAGMENT_TEXTURE_COLOUR
 } FragmentType;
 
 typedef enum {
 	UNIFORM_SCALE,
 	UNIFORM_COLOUR,
+	UNIFORM_LIGHT,
 	UNIFORM_MODEL,
 	UNIFORM_VIEW,
 	UNIFORM_PROJECTION,
@@ -39,6 +41,7 @@ public:
 	void set_int( Uniform type, int value );
 	void set_float( Uniform uniform, float value );
 	void set_vec3( Uniform uniform, float x, float y, float z );
+	void set_vec4( Uniform uniform, float x, float y, float z, float a );
 	void set_mat4( Uniform uniform, const float *mat_ptr );
 
 	void destroy( void );

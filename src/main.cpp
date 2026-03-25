@@ -18,6 +18,7 @@
 #include "scene/shapes/triangle.h"
 #include "scene/shapes/square.h"
 #include "scene/shapes/cube.h"
+#include "scene/shapes/light_cube.h"
 
 int main( void )
 {
@@ -42,16 +43,22 @@ int main( void )
 	
 	// Object
 	shape_data object = shape::cube();
+	shape_data light_cube = shape::light_cube();
 
 	// Shader
 	Shader shader( object.fragment_type );
+	Shader light_shader( light_cube.fragment_type );
 
 	// Mesh
 	Mesh mesh( object );
+	Mesh light_cube_mesh( light_cube );
+
+	light_cube_mesh.set_position( 1.5f, 0.0f, 0.5f );
+	light_cube_mesh.set_scale_uniform( 0.5f );
 
 	// Culling
 	glEnable( GL_CULL_FACE );
-	glCullFace( GL_FRONT );
+	glCullFace( GL_BACK );
 	glFrontFace( GL_CCW );
 
 	// Time
@@ -83,7 +90,8 @@ int main( void )
 			frames = 0;
 		}
 
-		renderer_draw( &shader, &mesh, &camera, GL_TRIANGLES );
+		renderer_draw( &shader, &mesh, &camera );
+		renderer_draw( &light_shader, &light_cube_mesh, &camera );
 
 		glfwSwapBuffers( window_ptr ); // update each frame
 		glfwPollEvents();
