@@ -77,8 +77,11 @@ int main( void )
 
 	// Mouse state
 	mouse_state mouse;
+	mouse_state mouse_lmb;
 	scroll_state scroll;
-	input_init( window_ptr, &mouse, &scroll );
+	input_init( window_ptr, &mouse, &scroll, & mouse_lmb );
+	float mesh_rot_x = 0.0f;
+	float mesh_rot_y = 0.0f;
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
@@ -91,6 +94,9 @@ int main( void )
 		input_process( window_ptr );
 		camera.update( window_ptr, delta_time, &mouse, &scroll );
 
+		input_update_mesh_rotation( &mouse_lmb, &mesh_rot_x, &mesh_rot_y );
+		mesh.set_rotation( mesh_rot_x, mesh_rot_y, 0.0f );
+
 		glClearColor( 0.0f, 0.0f, 0.0f, 1.7f );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
@@ -99,8 +105,9 @@ int main( void )
 			frames = 0;
 		}
 
-		renderer_draw( &shader, &mesh, &camera );
+
 		shader.set_vec4( UNIFORM_COLOUR, 1.0f, 1.0f, 1.0f, 1.0f );
+		renderer_draw( &shader, &mesh, &camera );
 
 		shader.set_vec3( UNIFORM_VIEW_POS, camera.position[0],
 		                 camera.position[1], camera.position[2] );
