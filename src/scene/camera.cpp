@@ -2,10 +2,10 @@
 
 Camera::Camera( void )
 {
-	glm_vec3_copy( (vec3){ 0.0f, 0.0f, 3.0f }, position );
+	glm_vec3_copy( (vec3){ 0.0f, 5.0f, 7.0f }, position );
 	fov = 70.0f;
 	yaw = -90.0f;
-	pitch = 0.0f;
+	pitch = -20.0f;
 	aspect = 800.0f / 800.0f;
 	near_plane = 0.1f;
 	far_plane = 100.0f;

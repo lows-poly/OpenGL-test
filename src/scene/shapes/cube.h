@@ -135,7 +135,7 @@ constexpr GLuint cube_ind[] = {
 };
 
 static constexpr int CUBE_VERTEX_COUNT = sizeof( cube_vert ) / sizeof( GLfloat ) / 3;
-static constexpr const char *TEXTURE = "assets/textures/CONCRETE-1.png";
+static constexpr const char *TEXTURE = "assets/textures/CONCRETE-2.png";
 static constexpr const char *TEXTURE_SPEC = "assets/textures/PLANKS-SPEC.png";
 
 inline shape_data cube( void )
