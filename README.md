@@ -1,10 +1,15 @@
 <div align="center">
+
 # ABOUT THIS PROJECT
+This personal project serves as a sandbox for exploring the fundamentals of
+graphics programming, rendering pipeline, shader development, camera system, and
+basic scene management.
+
 </div>
 
 <div align="center">
 
-# PREVIEW
+## PREVIEW
 
 </div>
 
