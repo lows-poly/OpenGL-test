@@ -118,14 +118,14 @@ int main( void )
 		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-		renderer_draw( &shader, &mesh, &camera );
+		renderer_draw( window_ptr, &shader, &mesh, &camera );
 		shader.set_vec3( UNIFORM_VIEW_POS, camera.position[0],
 		                 camera.position[1], camera.position[2] );
 
 		shader.set_vec3( UNIFORM_LIGHT_POS, light_pos[0], light_pos[1],
 		                 light_pos[2] );
 
-		renderer_draw( &light_shader, &light_cube_mesh, &camera );
+		renderer_draw( window_ptr, &light_shader, &light_cube_mesh, &camera );
 
 		glfwSwapBuffers( window_ptr );
 		glfwPollEvents();

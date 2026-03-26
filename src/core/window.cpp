@@ -8,7 +8,7 @@ GLFWwindow* create_window( const window_config &config )
 	// hints
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-	glfwWindowHint( GLFW_SAMPLES, 16 );
+	glfwWindowHint( GLFW_SAMPLES, 8 );
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // macos
 
@@ -32,7 +32,7 @@ GLFWwindow* create_window( const window_config &config )
 	glfwGetFramebufferSize( window_ptr, &fb_width, &fb_height );
 	glViewport( 0, 0, fb_width, fb_height );
 	glfwSetFramebufferSizeCallback( window_ptr, framebuffer_size_callback );
-
+	
 	return window_ptr;
 }
 

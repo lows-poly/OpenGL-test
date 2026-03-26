@@ -19,7 +19,7 @@ public:
 	             scroll_state *scroll_ptr );
 
 	void get_view( mat4 out ) const;
-	void get_projection( mat4 out ) const;
+	void get_projection( mat4 out, float width, float height );
 
 private:
 	void get_forward( vec3 out ) const;

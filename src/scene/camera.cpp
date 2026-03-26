@@ -45,9 +45,11 @@ void Camera::get_view( mat4 out ) const
 	glm_lookat( (float *)this->position, target, up, out );
 }
 
-void Camera::get_projection( mat4 out ) const
+void Camera::get_projection( mat4 out, float width, float height )
 {
-	glm_perspective( glm_rad( this->fov ), this->aspect, this->near_plane,
+	float aspect = width / height;
+
+	glm_perspective( glm_rad( this->fov ), aspect, this->near_plane,
 	                 this->far_plane, out );
 }
 

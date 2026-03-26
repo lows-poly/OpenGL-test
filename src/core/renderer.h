@@ -7,7 +7,7 @@
 #include "shader/buffers/VAO.h"
 #include "shader/buffers/EBO.h"
 
-void renderer_draw( Shader *shader_ptr, Mesh *mesh_ptr, Camera *cam_ptr,
-                    GLenum mode = GL_TRIANGLES );
+void renderer_draw( GLFWwindow *window_ptr, Shader *shader_ptr, Mesh *mesh_ptr,
+                    Camera *cam_ptr, GLenum mode = GL_TRIANGLES );
 
 void renderer_destroy( Shader *shader_ptr, Mesh *mesh_ptr );
