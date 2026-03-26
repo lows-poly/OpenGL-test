@@ -10,4 +10,5 @@
     <img src="assets/previews/p_texture_specular.png" width="400" height="400"/>
     <img src="assets/previews/p_directional.png" width="400" height="400"/>
     <img src="assets/previews/p_spotlight.png" width="400" height="400"/>
+    <img src="assets/previews/p_fog.png" width="400" height="400"/>
 </div>
