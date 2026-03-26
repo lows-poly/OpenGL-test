@@ -7,7 +7,7 @@
     <img src="assets/previews/p_crate.png" width="400" height="400"/>
     <img src="assets/previews/p_solid_specular.png" width="400" height="400"/>
     <img src="assets/previews/p_texture.png" width="400" height="400"/>
-    <img src="assets/previews/p_texture_specular.png" width="400" height="400"/>
+    <img src="assets/previews/p_texture_specular.png" width="800" height="400"/>
     <img src="assets/previews/p_directional.png" width="400" height="400"/>
     <img src="assets/previews/p_spotlight.png" width="400" height="400"/>
 </div>
