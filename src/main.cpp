@@ -40,7 +40,7 @@ int main( void )
 	// Camera
 	Camera camera;
 	glEnable( GL_DEPTH_TEST );
-	// glEnable( GL_MULTISAMPLE );
+	glEnable( GL_MULTISAMPLE );
 	
 	// Object
 	shape_data object = shape::cube();
@@ -71,11 +71,6 @@ int main( void )
 	glCullFace( GL_BACK );
 	glFrontFace( GL_CCW );
 
-	// Time
-	float last_time = 0.0f;
-	float delta_time = 0.0f;
-	int frames = 0;
-
 	// Mouse state
 	mouse_state mouse;
 	mouse_state mouse_lmb;
@@ -84,12 +79,34 @@ int main( void )
 	float mesh_rot_x = 0.0f;
 	float mesh_rot_y = 0.0f;
 
+	// Time
+	double last_frame_time = glfwGetTime();
+	float last_fps_time = last_frame_time;
+	float fps = 0.0f;
+	int frames = 0;
+
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
-		float current_time = (float) glfwGetTime();
-		delta_time = current_time - last_time;
-		last_time = current_time;
+		double current_time = glfwGetTime();
+		float delta_time = (float) (current_time - last_frame_time);
+		last_frame_time = current_time;
 		frames++;
+
+		if ( current_time - last_fps_time >= 1.0 ) {
+			fps = frames / ( current_time - last_fps_time );
+
+			frames = 0;
+			last_fps_time = current_time;
+
+			char title[64];
+			snprintf(
+				title,
+				sizeof(title),
+				"Renderer OpenGL 4.1 | FPS: %.2f",
+				fps
+			);
+			glfwSetWindowTitle( window_ptr, title );
+		}
 
 		// input
 		input_process( window_ptr );
@@ -100,11 +117,6 @@ int main( void )
 
 		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-		if ( fmod( current_time, 1.0f ) < delta_time ) {
-			std::cout << "FPS: " << frames << "\n";
-			frames = 0;
-		}
 
 		renderer_draw( &shader, &mesh, &camera );
 		shader.set_vec3( UNIFORM_VIEW_POS, camera.position[0],
