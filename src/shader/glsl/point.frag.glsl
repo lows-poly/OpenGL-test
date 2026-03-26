@@ -27,10 +27,16 @@ void main()
 	// diffuse
 	float diff = max( dot( normal, light_dir ), 0.0 );
 
-	// specular
-	float spec = pow( max( dot( view_dir, reflect_dir ), 0.0 ), 32.0 );
-	vec3 specular = texture( u_texture_specular, vertex_tex_coord ).rgb *
-	                         spec * vec3( u_light_colour );
+	vec3 specular = vec3( 0.0, 0.0, 0.0 );
+
+	if ( diff != 0.0f ) {
+		vec3 half_vector = normalize( view_dir + light_dir );
+
+		// specular
+		float spec = pow( max( dot( normal, half_vector ), 0.0 ), 32.0 );
+		specular = texture( u_texture_specular, vertex_tex_coord ).rgb *
+	                            spec * vec3( u_light_colour );
+	};
 
 	vec3 lighting = ( u_ambient + diff + specular ) * attenuation;
 	frag_colour = texture( u_texture, vertex_tex_coord ) *
