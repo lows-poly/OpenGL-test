@@ -1,4 +1,12 @@
-# Preview
+<div align="center">
+# ABOUT THIS PROJECT
+</div>
+
+<div align="center">
+
+# PREVIEW
+
+</div>
 
 <div align="center">
     <img src="assets/previews/coloured_triangle.png" width="400" height="400"/>
