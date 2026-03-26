@@ -46,17 +46,25 @@ static string read_file( const char *path_ptr )
 
 Shader::Shader( FragmentType fragment_type )
 {
-	string vertex_code = read_file( "src/shader/glsl/diffuse.vert.glsl" );
+	string vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
 	string fragment_code;
 
 	switch (fragment_type) {
-	case FRAGMENT_SOLID_DIFFUSE:
+	case FRAGMENT_SPOTLIGHT:
+		vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
+		fragment_code = read_file( "src/shader/glsl/spotlight.frag.glsl" );
+		break;
+	case FRAGMENT_DIRECTIONAL:
+		vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
+		fragment_code = read_file( "src/shader/glsl/directional.frag.glsl" );
+		break;
+	case FRAGMENT_SOLID_POINT:
 		vertex_code = read_file( "src/shader/glsl/diffuse.vert.glsl" );
 		fragment_code = read_file( "src/shader/glsl/solid_diffuse.frag.glsl" );
 		break;
-	case FRAGMENT_DIFFUSE:
-		vertex_code = read_file( "src/shader/glsl/diffuse.vert.glsl" );
-		fragment_code = read_file( "src/shader/glsl/diffuse.frag.glsl" );
+	case FRAGMENT_POINT:
+		vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
+		fragment_code = read_file( "src/shader/glsl/point.frag.glsl" );
 		break;
 	case FRAGMENT_TEXTURE:
 		fragment_code = read_file( "src/shader/glsl/texture.frag.glsl" );

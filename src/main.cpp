@@ -40,7 +40,7 @@ int main( void )
 	// Camera
 	Camera camera;
 	glEnable( GL_DEPTH_TEST );
-	glEnable( GL_MULTISAMPLE );
+	// glEnable( GL_MULTISAMPLE );
 	
 	// Object
 	shape_data object = shape::cube();
@@ -98,7 +98,7 @@ int main( void )
 		input_update_mesh_rotation( &mouse_lmb, &mesh_rot_x, &mesh_rot_y );
 		mesh.set_rotation( mesh_rot_x, mesh_rot_y, 0.0f );
 
-		glClearColor( 0.0f, 0.0f, 0.0f, 1.7f );
+		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		if ( fmod( current_time, 1.0f ) < delta_time ) {
