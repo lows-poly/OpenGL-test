@@ -1,5 +1,3 @@
-#define UNUSED __attribute__((unused))
-
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -28,12 +26,8 @@ int main( void )
 	}
 
 	// Window
-	window_config config;
-	config.width = 600;
-	config.height = 600;
-	config.title = "Renderer OpenGL 4.1";
-
-	GLFWwindow *window_ptr = create_window( config );
+	Window window;
+	GLFWwindow *window_ptr = window.get_window();
 	if ( !window_ptr )
 		return EXIT_FAILURE;
 
@@ -86,45 +80,17 @@ int main( void )
 	float mesh_rot_x = 0.0f;
 	float mesh_rot_y = 0.0f;
 
-	// Time
-	double last_frame_time = glfwGetTime();
-	float last_fps_time = last_frame_time;
-	float fps = 0.0f;
-	int frames = 0;
-
-	init_imgui( window_ptr );
+	window.init_imgui();
+	ImGuiIO &io = ImGui::GetIO(); (void)io;
+	float dt = 0.0f;
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
-		double current_time = glfwGetTime();
-		float delta_time = (float) (current_time - last_frame_time);
-		last_frame_time = current_time;
-		frames++;
-
-		// FPS counter
-		if ( current_time - last_fps_time >= 1.0 ) {
-			fps = frames / ( current_time - last_fps_time );
-
-			frames = 0;
-			last_fps_time = current_time;
-
-			char title[64];
-			snprintf(
-				title,
-				sizeof(title),
-				"Renderer OpenGL 4.1 | FPS: %.2f",
-				fps
-			);
-			glfwSetWindowTitle( window_ptr, title );
-		}
+		window.show_fps( &dt );
 
 		// input
 		input_process( window_ptr );
-		camera.update( window_ptr, delta_time, &mouse, &scroll );
-
-		// Mesh rotation
-		input_update_mesh_rotation( &mouse_lmb, &mesh_rot_x, &mesh_rot_y );
-		mesh.set_rotation( mesh_rot_x, mesh_rot_y, 0.0f );
+		camera.update( window_ptr, dt, &mouse, &scroll );
 
 		// Clear
 		glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
@@ -134,6 +100,13 @@ int main( void )
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		if ( !io.WantCaptureMouse ) {
+			input_update_mesh_rotation( &mouse_lmb, &mesh_rot_x,
+			                            &mesh_rot_y );
+
+			mesh.set_rotation( mesh_rot_x, mesh_rot_y, 0.0f );
+		}
 
 		ImGui::Begin("Hello Window");
 		ImGui::Text("Hello World!");
@@ -162,7 +135,6 @@ int main( void )
 	ImGui::DestroyContext();
 
 	renderer_destroy( &shader, &mesh );
-	glfwDestroyWindow( window_ptr ); // delete window before ending the program
-	glfwTerminate(); // terminate glfw entirely
+	window.destroy();
 	return EXIT_SUCCESS;
 }

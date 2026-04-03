@@ -7,12 +7,22 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-struct window_config {
-	int width = 800;
-	int height = 800;
-	const char* title = "Renderer OpenGL 4.1";
-};
+class Window {
+public:
+	Window( int width = 600, int height = 600,
+	        const char *title = "Renderer OpenGL 4.1" );
 
-GLFWwindow* create_window( const window_config &config );
-void init_imgui( GLFWwindow *window_ptr );
-void framebuffer_size_callback( GLFWwindow *window_ptr, int width, int height );
+	GLFWwindow *get_window( void ) const;
+	void init_imgui( void );
+	void show_fps( float *dt_ptr );
+
+	void destroy( void );
+
+private:
+	GLFWwindow *window_ptr;
+
+	double last_frame_time = glfwGetTime();
+	float last_fps_time = this->last_frame_time;
+	float fps = 0.0f;
+	int frames = 0;
+};
