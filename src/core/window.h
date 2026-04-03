@@ -13,8 +13,10 @@ public:
 	        const char *title = "Renderer OpenGL 4.1" );
 
 	GLFWwindow *get_window( void ) const;
+	bool get_msaa( void ) const;
 	void init_imgui( void );
 	void show_fps( float *dt_ptr );
+	void set_msaa( bool enabled );
 
 	void destroy( void );
 
@@ -25,4 +27,6 @@ private:
 	float last_fps_time = this->last_frame_time;
 	float fps = 0.0f;
 	int frames = 0;
+
+	bool MSAA = true;
 };

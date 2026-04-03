@@ -78,6 +78,21 @@ void Window::show_fps( float *dt_ptr )
 	}
 }
 
+bool Window::get_msaa( void ) const
+{
+	return this->MSAA;
+}
+
+void Window::set_msaa( bool enabled )
+{
+	this->MSAA = enabled;
+
+	if ( enabled )
+		glEnable( GL_MULTISAMPLE );
+	else
+		glDisable( GL_MULTISAMPLE );
+}
+
 void Window::destroy( void )
 {
 	glfwDestroyWindow( this->window_ptr );

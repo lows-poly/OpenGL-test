@@ -61,9 +61,6 @@ int main( void )
 	// Dept
 	// glEnable( GL_DEPTH_TEST );
 
-	// MSAA
-	glEnable( GL_MULTISAMPLE );
-
 	// Gamma
 	// glEnable( GL_FRAMEBUFFER_SRGB );
 
@@ -83,6 +80,7 @@ int main( void )
 	window.init_imgui();
 	ImGuiIO &io = ImGui::GetIO(); (void)io;
 	float dt = 0.0f;
+	bool msaa = window.get_msaa();
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
@@ -101,19 +99,17 @@ int main( void )
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		ImGui::Begin("DEBUG", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
+		ImGui::Checkbox( "MSAA", &msaa );
+		window.set_msaa( msaa );
+		ImGui::End();
+
 		if ( !io.WantCaptureMouse ) {
 			input_update_mesh_rotation( &mouse_lmb, &mesh_rot_x,
 			                            &mesh_rot_y );
 
 			mesh.set_rotation( mesh_rot_x, mesh_rot_y, 0.0f );
 		}
-
-		ImGui::Begin("Hello Window");
-		ImGui::Text("Hello World!");
-		ImGui::End();
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
 
 		// Render
 		renderer_draw( window_ptr, &shader, &mesh, &camera );
@@ -124,6 +120,9 @@ int main( void )
 		                 light_pos[2] );
 
 		renderer_draw( window_ptr, &light_shader, &light_cube_mesh, &camera );
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
 
 		glfwSwapBuffers( window_ptr );
 		glfwPollEvents();
