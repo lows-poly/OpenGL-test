@@ -1,5 +1,9 @@
 #pragma once
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -10,4 +14,5 @@ struct window_config {
 };
 
 GLFWwindow* create_window( const window_config &config );
+void init_imgui( GLFWwindow *window_ptr );
 void framebuffer_size_callback( GLFWwindow *window_ptr, int width, int height );

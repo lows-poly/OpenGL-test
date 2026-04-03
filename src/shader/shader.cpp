@@ -49,7 +49,7 @@ Shader::Shader( FragmentType fragment_type )
 	string vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
 	string fragment_code;
 
-	switch (fragment_type) {
+	switch ( fragment_type ) {
 	case FRAGMENT_SPOTLIGHT:
 		vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
 		fragment_code = read_file( "src/shader/glsl/spotlight.frag.glsl" );

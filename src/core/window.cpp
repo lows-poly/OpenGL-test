@@ -36,6 +36,16 @@ GLFWwindow* create_window( const window_config &config )
 	return window_ptr;
 }
 
+void init_imgui( GLFWwindow *window_ptr )
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO &io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL( window_ptr, true );
+	ImGui_ImplOpenGL3_Init( "#version 410" );
+}
+
 void framebuffer_size_callback( UNUSED GLFWwindow *window_ptr, int width, int height )
 {
 	glViewport( 0, 0, width, height );
