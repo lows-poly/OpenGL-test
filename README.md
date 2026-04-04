@@ -24,5 +24,5 @@ basic scene management.
     <img src="assets/previews/p_directional.png" width="400" height="400"/>
     <img src="assets/previews/p_spotlight.png" width="400" height="400"/>
     <img src="assets/previews/p_fog.png" width="400" height="400"/>
-    <img src="assets/previews/p_imgui.png" width="400" height="400"/>
+    <img src="assets/previews/p_imgui.png" width="800" height="800"/>
 </div>
