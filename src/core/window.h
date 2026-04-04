@@ -19,8 +19,8 @@ public:
 	void render_imgui( void ) const;
 	void create_msaa_debug( void );
 
-	bool get_msaa( void ) const;
-	void set_msaa( bool enabled );
+	// bool get_msaa( void ) const;
+	// void set_msaa( bool enabled );
 
 	void show_fps( float *dt_ptr );
 
