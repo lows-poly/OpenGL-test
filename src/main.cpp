@@ -77,13 +77,19 @@ int main( void )
 	float mesh_rot_x = 0.0f;
 	float mesh_rot_y = 0.0f;
 
+	// ImGui
 	window.init_imgui();
-	ImGuiIO &io = ImGui::GetIO(); (void)io;
+	ImGuiIO *io_ptr = window.get_io();
+
+	double last_frame_time = glfwGetTime();
 	float dt = 0.0f;
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
-		window.show_fps( &dt );
+
+		double current_time = glfwGetTime();
+		dt = (float) ( current_time - last_frame_time );
+		last_frame_time = current_time;
 
 		// Input
 		input_process( window_ptr );
@@ -97,11 +103,10 @@ int main( void )
 		window.start_imgui();
 
 		window.create_msaa_debug();
-
-		ImGui::End();
+		window.show_fps();
 
 		// Mesh rotation input
-		if ( io.WantCaptureMouse ) {
+		if ( !io_ptr->WantCaptureMouse ) {
 			input_update_mesh_rotation( &mouse_lmb, &mesh_rot_x,
 			                            &mesh_rot_y );
 
@@ -116,7 +121,8 @@ int main( void )
 		shader.set_vec3( UNIFORM_LIGHT_POS, light_pos[0], light_pos[1],
 		                 light_pos[2] );
 
-		renderer_draw( window_ptr, &light_shader, &light_cube_mesh, &camera );
+		renderer_draw( window_ptr, &light_shader, &light_cube_mesh,
+		               &camera );
 
 		window.render_imgui();
 		glfwSwapBuffers( window_ptr );

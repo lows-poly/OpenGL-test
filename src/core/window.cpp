@@ -20,14 +20,14 @@ Window::Window( int width, int height, const char *title )
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // macos
 
-	GLFWwindow *window_ptr = glfwCreateWindow( width, height,
+	this->window_ptr = glfwCreateWindow( width, height,
 	                                           title, NULL, NULL );
-	if ( !window_ptr ) {
+	if ( !this->window_ptr ) {
 		std::cerr << "FAILED TO CREATE GLFW WINDOW\n";
 		glfwTerminate();
 	}
 
-	glfwMakeContextCurrent( window_ptr );
+	glfwMakeContextCurrent( this->window_ptr );
 	glfwSwapInterval( 1 ); // V-Sync
 
 	if ( !gladLoadGLLoader( (GLADloadproc)glfwGetProcAddress ) ) {
@@ -35,11 +35,9 @@ Window::Window( int width, int height, const char *title )
 	}
 
 	int fb_width, fb_height;
-	glfwGetFramebufferSize( window_ptr, &fb_width, &fb_height );
+	glfwGetFramebufferSize( this->window_ptr, &fb_width, &fb_height );
 	glViewport( 0, 0, fb_width, fb_height );
-	glfwSetFramebufferSizeCallback( window_ptr, framebuffer_size_callback );
-	
-	this->window_ptr = window_ptr;
+	glfwSetFramebufferSizeCallback( this->window_ptr, framebuffer_size_callback );
 }
 
 // PUBLIC METHODS
@@ -54,6 +52,7 @@ void Window::init_imgui( void )
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
+	this->io_ptr = &ImGui::GetIO();
 
 	ImGuiStyle &style = ImGui::GetStyle();
 	style.WindowRounding = 5.0f;
@@ -79,6 +78,8 @@ void Window::create_msaa_debug( void )
 		glEnable( GL_MULTISAMPLE );
 	else
 		glDisable( GL_MULTISAMPLE );
+
+	ImGui::End();
 }
 
 void Window::render_imgui( void ) const
@@ -87,24 +88,17 @@ void Window::render_imgui( void ) const
 	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
 }
 
-void Window::show_fps( float *dt_ptr )
+ImGuiIO *Window::get_io( void ) const
 {
-	double current_time = glfwGetTime();
-	*dt_ptr = (float) ( current_time - this->last_frame_time );
-	this->last_frame_time = current_time;
-	this->frames++;
+	return this->io_ptr;
+}
 
-	if ( current_time - this->last_fps_time >= 1.0 ) {
-		this->fps = this->frames / ( current_time - this->last_fps_time );
-		this->frames = 0;
-		this->last_fps_time = current_time;
+void Window::show_fps( void )
+{
+	if ( not this->io_ptr )
+		return;
 
-		char title[64];
-		snprintf( title, sizeof(title), "Renderer OpenGL 4.1 | FPS: %.2f",
-		          fps );
-
-		glfwSetWindowTitle( this->window_ptr, title );
-	}
+	ImGui::Text( "FPS: %.1f", this->io_ptr->Framerate );
 }
 
 // bool Window::get_msaa( void ) const

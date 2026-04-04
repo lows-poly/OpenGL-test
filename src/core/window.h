@@ -19,20 +19,17 @@ public:
 	void render_imgui( void ) const;
 	void create_msaa_debug( void );
 
+	ImGuiIO *get_io( void ) const;
 	// bool get_msaa( void ) const;
 	// void set_msaa( bool enabled );
 
-	void show_fps( float *dt_ptr );
+	void show_fps( void );
 
 	void destroy( void );
 
 private:
+	ImGuiIO *io_ptr = nullptr;
 	GLFWwindow *window_ptr;
-
-	double last_frame_time = glfwGetTime();
-	float last_fps_time = this->last_frame_time;
-	float fps = 0.0f;
-	int frames = 0;
 
 	bool MSAA = true;
 };
