@@ -80,13 +80,12 @@ int main( void )
 	window.init_imgui();
 	ImGuiIO &io = ImGui::GetIO(); (void)io;
 	float dt = 0.0f;
-	bool msaa = window.get_msaa();
 
 	// Render Loop
 	while( !glfwWindowShouldClose( window_ptr ) ) {
 		window.show_fps( &dt );
 
-		// input
+		// Input
 		input_process( window_ptr );
 		camera.update( window_ptr, dt, &mouse, &scroll );
 
@@ -95,16 +94,14 @@ int main( void )
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 		// Imgui
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+		window.start_imgui();
 
-		ImGui::Begin("DEBUG", nullptr, ImGuiWindowFlags_NoFocusOnAppearing);
-		ImGui::Checkbox( "MSAA", &msaa );
-		window.set_msaa( msaa );
+		window.create_msaa_debug();
+
 		ImGui::End();
 
-		if ( !io.WantCaptureMouse ) {
+		// Mesh rotation input
+		if ( io.WantCaptureMouse ) {
 			input_update_mesh_rotation( &mouse_lmb, &mesh_rot_x,
 			                            &mesh_rot_y );
 
@@ -121,9 +118,7 @@ int main( void )
 
 		renderer_draw( window_ptr, &light_shader, &light_cube_mesh, &camera );
 
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
-
+		window.render_imgui();
 		glfwSwapBuffers( window_ptr );
 		glfwPollEvents();
 	}

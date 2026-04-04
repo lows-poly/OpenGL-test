@@ -54,8 +54,37 @@ void Window::init_imgui( void )
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
+
+	ImGuiStyle &style = ImGui::GetStyle();
+	style.WindowRounding = 5.0f;
+	style.FrameRounding  = 3.0f;
+
 	ImGui_ImplGlfw_InitForOpenGL( this->window_ptr, true );
 	ImGui_ImplOpenGL3_Init( "#version 410" );
+}
+
+void Window::start_imgui( void ) const
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+}
+
+void Window::create_msaa_debug( void )
+{
+	ImGui::Begin("DEBUG");
+	ImGui::Checkbox( "MSAA", &this->MSAA );
+
+	if ( this->MSAA )
+		glEnable( GL_MULTISAMPLE );
+	else
+		glDisable( GL_MULTISAMPLE );
+}
+
+void Window::render_imgui( void ) const
+{
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
 }
 
 void Window::show_fps( float *dt_ptr )
