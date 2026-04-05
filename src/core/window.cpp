@@ -123,6 +123,12 @@ void Window::start_imgui( void ) const
 	ImGui::NewFrame();
 }
 
+void Window::render_imgui( void ) const
+{
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+}
+
 void Window::create_msaa_debug( void )
 {
 	ImGui::SetNextWindowSize( ImVec2( 120.0f, 50.0f ), ImGuiCond_Always );
@@ -135,17 +141,6 @@ void Window::create_msaa_debug( void )
 		glDisable( GL_MULTISAMPLE );
 
 	ImGui::End();
-}
-
-void Window::render_imgui( void ) const
-{
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
-}
-
-ImGuiIO *Window::get_io( void ) const
-{
-	return this->io_ptr;
 }
 
 void Window::show_fps( void )
@@ -173,6 +168,11 @@ void Window::show_fps( void )
 // 	else
 // 		glDisable( GL_MULTISAMPLE );
 // }
+
+ImGuiIO *Window::get_io( void ) const
+{
+	return this->io_ptr;
+}
 
 void Window::destroy( void )
 {

@@ -32,4 +32,5 @@ private:
 	GLFWwindow *window_ptr;
 
 	bool MSAA = true;
+	int msaa_index = 0;
 };
