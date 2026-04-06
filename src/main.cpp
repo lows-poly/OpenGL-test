@@ -102,7 +102,7 @@ int main( void )
 		// Imgui
 		window.start_imgui();
 
-		window.create_msaa_debug();
+		window.create_debug_window();
 		window.show_fps();
 
 		// Mesh rotation input
