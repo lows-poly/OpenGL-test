@@ -7,6 +7,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+inline constexpr float AVG_FPS_INTERVAL = 1.0f;
+
 class Window {
 public:
 	Window( int width = 600, int height = 600,
@@ -33,5 +35,6 @@ private:
 
 	bool MSAA = true;
 	bool V_SYNC = true;
+	bool CULLING = true;
 	int msaa_index = 0;
 };

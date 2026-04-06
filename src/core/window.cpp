@@ -16,12 +16,12 @@ Window::Window( int width, int height, const char *title )
 	// Hints
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
 	glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-	glfwWindowHint( GLFW_SAMPLES, 8 ); // MultiSampling
+	glfwWindowHint( GLFW_SAMPLES, 32 ); // MultiSampling
 	glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
 	glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE ); // macos
 
 	this->window_ptr = glfwCreateWindow( width, height,
-	                                           title, NULL, NULL );
+	                                     title, NULL, NULL );
 	if ( !this->window_ptr ) {
 		std::cerr << "FAILED TO CREATE GLFW WINDOW\n";
 		glfwTerminate();
@@ -73,9 +73,9 @@ void Window::init_imgui( void )
 	ImVec4 *colors = style.Colors;
 
 	// Windows
-	colors[ImGuiCol_WindowBg]     = ImVec4( 0.12f, 0.12f, 0.10f, 1.00f );
-	colors[ImGuiCol_Border]       = ImVec4( 0.50f, 0.50f, 0.40f, 1.00f );
-	colors[ImGuiCol_BorderShadow] = ImVec4( 0.00f, 0.00f, 0.00f, 1.00f );
+	colors[ImGuiCol_WindowBg]     = ImVec4( 0.12f, 0.12f, 0.10f, 0.80f );
+	colors[ImGuiCol_Border]       = ImVec4( 0.50f, 0.50f, 0.40f, 0.80f );
+	colors[ImGuiCol_BorderShadow] = ImVec4( 0.00f, 0.00f, 0.00f, 0.80f );
 
 	// Title
 	colors[ImGuiCol_TitleBg]          = ImVec4( 0.20f, 0.18f, 0.14f, 1.00f );
@@ -131,11 +131,12 @@ void Window::render_imgui( void ) const
 
 void Window::create_debug_window( void )
 {
-	ImGui::SetNextWindowSize( ImVec2( 200.0f, 70.0f ), ImGuiCond_Always );
+	ImGui::SetNextWindowSize( ImVec2( 200.0f, 90.0f ), ImGuiCond_Always );
 	ImGui::Begin("DEBUG", nullptr, ImGuiWindowFlags_NoResize );
 
 	ImGui::Checkbox( "MSAA", &this->MSAA );
 	ImGui::Checkbox( "V-SYNC", &this->V_SYNC );
+	ImGui::Checkbox( "CULLING", &this->CULLING );
 
 	if ( this->MSAA )
 		glEnable( GL_MULTISAMPLE );
@@ -147,6 +148,11 @@ void Window::create_debug_window( void )
 	else
 		glfwSwapInterval( 0 );
 
+	if ( this->CULLING )
+		glEnable( GL_CULL_FACE );
+	else
+		glDisable( GL_CULL_FACE );
+
 	ImGui::End();
 }
 
@@ -155,9 +161,38 @@ void Window::show_fps( void )
 	if ( not this->io_ptr )
 		return;
 
-	ImGui::SetNextWindowSize( ImVec2( 100.0f, 50.0f ), ImGuiCond_Always );
+	// True FPS
+	int fw, ww;
+	glfwGetFramebufferSize( this->window_ptr, &fw, nullptr );
+	glfwGetWindowSize( this->window_ptr, &ww, nullptr );
+	float scale = (float)fw / (float)ww;
+	float fps = this->io_ptr->Framerate / scale;
+
+	// Avg FPS
+	static float history[100] = {};
+	static float sum = 0.0f;
+	static int index = 0;
+	static float timer = 0.0f;
+
+	timer += this->io_ptr->DeltaTime;
+
+	sum -= history[index];
+	history[index] = fps;
+	sum += fps;
+	index = (index + 1) % 100;
+
+	static float avg_fps = 0.0f;
+	
+	if ( timer >= AVG_FPS_INTERVAL ) {
+		avg_fps = sum / 100;
+		timer = 0.0f;
+	}
+
+	// Gui
+	ImGui::SetNextWindowSize( ImVec2( 100.0f, 60.0f ), ImGuiCond_Always );
 	ImGui::Begin("FPS", nullptr, ImGuiWindowFlags_NoResize );
-	ImGui::Text( "FPS: %.1f", this->io_ptr->Framerate );
+	ImGui::Text( "FPS: %.1f", fps );
+	ImGui::Text( "AVG: %.1f", avg_fps );
 	ImGui::End();
 }
 
