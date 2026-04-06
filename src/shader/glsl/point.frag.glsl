@@ -33,7 +33,7 @@ void main()
 		vec3 half_vector = normalize( view_dir + light_dir );
 
 		// specular
-		float spec = pow( max( dot( normal, half_vector ), 0.0 ), 32.0 );
+		float spec = pow( max( dot( normal, half_vector ), 0.0 ), 16 );
 		specular = texture( u_texture_specular, vertex_tex_coord ).rgb *
 	                            spec * vec3( u_light_colour );
 	};

@@ -4,8 +4,6 @@
 
 #include "shader.h"
 
-typedef std::string string;
-
 // FUNCTIONS
 
 static const char *u_names[UNIFORM_COUNT] = {
@@ -24,14 +22,14 @@ static const char *u_names[UNIFORM_COUNT] = {
 	[UNIFORM_TRANSFORM] = "u_transform"
 };
 
-static string read_file( const char *path_ptr )
+static std::string read_file( const char *path_ptr )
 {
 	std::ifstream in( path_ptr, std::ios::binary );
 
 	if ( !in )
 		throw std::runtime_error( "FAILED TO READ FILE" );
 
-	string contents;
+	std::string contents;
 
 	in.seekg( 0, std::ios::end );
 	contents.resize( in.tellg() );
@@ -44,46 +42,12 @@ static string read_file( const char *path_ptr )
 
 // Constructor
 
-Shader::Shader( FragmentType fragment_type )
+Shader::Shader( shader_type type )
 {
-	string vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
-	string fragment_code;
+	std::string vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
+	std::string fragment_code;
 
-	switch ( fragment_type ) {
-	case FRAGMENT_SPOTLIGHT:
-		vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
-		fragment_code = read_file( "src/shader/glsl/spotlight.frag.glsl" );
-		break;
-	case FRAGMENT_DIRECTIONAL:
-		vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
-		fragment_code = read_file( "src/shader/glsl/directional.frag.glsl" );
-		break;
-	case FRAGMENT_SOLID_POINT:
-		vertex_code = read_file( "src/shader/glsl/diffuse.vert.glsl" );
-		fragment_code = read_file( "src/shader/glsl/solid_diffuse.frag.glsl" );
-		break;
-	case FRAGMENT_POINT:
-		vertex_code = read_file( "src/shader/glsl/point.vert.glsl" );
-		fragment_code = read_file( "src/shader/glsl/point.frag.glsl" );
-		break;
-	case FRAGMENT_TEXTURE:
-		fragment_code = read_file( "src/shader/glsl/texture.frag.glsl" );
-		break;
-	case FRAGMENT_TEXTURE_COLOUR:
-		fragment_code = read_file(
-			"src/shader/glsl/texture_colour.frag.glsl"
-		);
-		break;
-	case FRAGMENT_LIGHT:
-		fragment_code = read_file( "src/shader/glsl/light.frag.glsl" );
-		break;
-	case FRAGMENT_DEFAULT:
-		fragment_code = read_file( "src/shader/glsl/default.frag.glsl" );
-		break;
-	default:
-		std::cerr << "UNKNOWN FRAGMENT SHADER TYPE\n";
-		break;
-	}
+	this->get_shader( type, &vertex_code, &fragment_code );
 
 	const char *v_src_ptr = vertex_code.c_str();
 	const char *f_src_ptr = fragment_code.c_str();
@@ -168,6 +132,36 @@ void Shader::destroy( void )
 
 // PRIVATE METHODS
 
+void Shader::get_shader( shader_type type, std::string *vert_ptr,
+                         std::string *frag_ptr )
+{
+	if ( !vert_ptr || !frag_ptr )
+		return;
+
+	switch ( type ) {
+	case SHADER_POINT:
+		*vert_ptr = read_file( "src/shader/glsl/point.vert.glsl" );
+		*frag_ptr = read_file( "src/shader/glsl/point.frag.glsl" );
+		break;
+	case SHADER_SPOT:
+		*vert_ptr = read_file( "src/shader/glsl/default.vert.glsl" );
+		*frag_ptr = read_file( "src/shader/glsl/spotlight.frag.glsl" );
+		break;
+	case SHADER_DIRECTIONAL:
+		*vert_ptr = read_file( "src/shader/glsl/default.vert.glsl" );
+		*frag_ptr = read_file( "src/shader/glsl/spotlight.frag.glsl" );
+		break;
+	case SHADER_LIGHT_SRC:
+		*vert_ptr = read_file( "src/shader/glsl/point.vert.glsl" );
+		*frag_ptr = read_file( "src/shader/glsl/light.frag.glsl" );
+		break;
+	default:
+		*vert_ptr = read_file( "src/shader/glsl/default.vert.glsl" );
+		*frag_ptr = read_file( "src/shader/glsl/directional.frag.glsl" );
+		break;
+	}
+}
+
 GLuint Shader::compile_shader( GLenum type, const char *src_ptr )
 {
 	GLuint id = glCreateShader( type );
@@ -189,7 +183,7 @@ GLuint Shader::compile_shader( GLenum type, const char *src_ptr )
 	return id;
 }
 
-void Shader::compile_errors( unsigned int shader, const string& type )
+void Shader::compile_errors( unsigned int shader, const std::string &type )
 {
 	GLint is_compiled;
 	char info_log[1024];

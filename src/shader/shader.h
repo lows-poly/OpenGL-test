@@ -7,18 +7,12 @@
 #include <iostream>
 #include <string>
 
-typedef std::string string;
-
 typedef enum {
-	FRAGMENT_DEFAULT,
-	FRAGMENT_TEXTURE,
-	FRAGMENT_LIGHT,
-	FRAGMENT_POINT,
-	FRAGMENT_SPOTLIGHT,
-	FRAGMENT_DIRECTIONAL,
-	FRAGMENT_SOLID_POINT,
-	FRAGMENT_TEXTURE_COLOUR
-} FragmentType;
+	SHADER_POINT,
+	SHADER_SPOT,
+	SHADER_DIRECTIONAL,
+	SHADER_LIGHT_SRC
+} shader_type;
 
 typedef enum {
 	UNIFORM_SCALE,
@@ -40,7 +34,7 @@ typedef enum {
 class Shader {
 public:
 	GLuint ID;
-	Shader( FragmentType type = FRAGMENT_DEFAULT );
+	Shader( shader_type type = SHADER_POINT );
 
 	void enable( void );
 	
@@ -58,5 +52,7 @@ private:
 	GLint uniforms[UNIFORM_COUNT];
 
 	GLuint compile_shader( GLenum type, const char *src_ptr );
-	void compile_errors( unsigned int shader, const string &type );
+	void compile_errors( unsigned int shader, const std::string &type );
+	void get_shader( shader_type type, std::string *vert_ptr,
+	                 std::string *frag_ptr );
 };
