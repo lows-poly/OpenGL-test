@@ -129,16 +129,23 @@ void Window::render_imgui( void ) const
 	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
 }
 
-void Window::create_msaa_debug( void )
+void Window::create_debug_window( void )
 {
-	ImGui::SetNextWindowSize( ImVec2( 120.0f, 50.0f ), ImGuiCond_Always );
+	ImGui::SetNextWindowSize( ImVec2( 200.0f, 70.0f ), ImGuiCond_Always );
 	ImGui::Begin("DEBUG", nullptr, ImGuiWindowFlags_NoResize );
+
 	ImGui::Checkbox( "MSAA", &this->MSAA );
+	ImGui::Checkbox( "V-SYNC", &this->V_SYNC );
 
 	if ( this->MSAA )
 		glEnable( GL_MULTISAMPLE );
 	else
 		glDisable( GL_MULTISAMPLE );
+
+	if ( this->V_SYNC )
+		glfwSwapInterval( 1 );
+	else
+		glfwSwapInterval( 0 );
 
 	ImGui::End();
 }
