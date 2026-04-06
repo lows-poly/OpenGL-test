@@ -17,7 +17,7 @@ public:
 	void init_imgui( void );
 	void start_imgui( void ) const;
 	void render_imgui( void ) const;
-	void create_msaa_debug( void );
+	void create_debug_window( void );
 
 	ImGuiIO *get_io( void ) const;
 	// bool get_msaa( void ) const;
@@ -32,5 +32,6 @@ private:
 	GLFWwindow *window_ptr;
 
 	bool MSAA = true;
+	bool V_SYNC = true;
 	int msaa_index = 0;
 };
