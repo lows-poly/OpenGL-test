@@ -71,7 +71,7 @@ inline shape_data light_cube( void )
 		{
 			{ 0, 3, GL_FLOAT, 0                   },  // position
 		},
-		FragmentType::FRAGMENT_LIGHT,
+		shader_type::SHADER_LIGHT_SRC,
 	};
 }
 

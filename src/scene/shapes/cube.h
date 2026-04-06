@@ -160,7 +160,7 @@ inline shape_data cube( void )
 			{ 1, 3, GL_FLOAT, 3 * sizeof( float ) },  // normals
 			{ 2, 2, GL_FLOAT, 6 * sizeof( float ) },  // texture
 		},
-		FragmentType::FRAGMENT_POINT,
+		shader_type::SHADER_POINT,
 	};
 }
 
