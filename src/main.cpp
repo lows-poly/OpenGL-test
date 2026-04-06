@@ -59,7 +59,7 @@ int main( void )
 	light_cube_mesh.get_position( light_pos );
 
 	// Dept
-	// glEnable( GL_DEPTH_TEST );
+	glEnable( GL_DEPTH_TEST );
 
 	// Gamma
 	// glEnable( GL_FRAMEBUFFER_SRGB );
