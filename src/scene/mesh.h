@@ -25,7 +25,7 @@ struct shape_data {
 	size_t v_size;
 	size_t ind_size;
 	std::vector<Attribute> attributes;
-	FragmentType fragment_type;
+	shader_type fragment_type;
 };
 
 class Mesh {
